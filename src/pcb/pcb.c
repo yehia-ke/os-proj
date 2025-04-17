@@ -48,7 +48,7 @@ PCB* create_process(int pid, char* program_file, int arrival_time) {
     set_memory_word(mem_lower + 5, temp);
     
 
-    fp = fopen(program_file, "r");
+    fp = fopen(file_path, "r");
     for (int i = 0; i < num_instructions; i++) {
         fgets(line, sizeof(line), fp);
         line[strcspn(line, "\n")] = 0;
