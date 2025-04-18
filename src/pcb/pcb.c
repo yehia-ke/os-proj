@@ -85,6 +85,13 @@ void set_state(PCB* pcb, char* new_state) {
     set_memory_word(pcb->mem_lower + 1, temp);
 }
 
+void set_priority(PCB* pcb, int new_priority) {
+    pcb->priority = new_priority;
+    char temp[50];
+    sprintf(temp, "PCB_Priority:%d", new_priority);
+    set_memory_word(pcb->mem_lower + 2, temp);
+}
+
 char* get_instruction(PCB* pcb) {
     int instr_index = pcb->mem_lower + 6 + pcb->pc;
     if (instr_index >= pcb->mem_upper - 3) return NULL;
