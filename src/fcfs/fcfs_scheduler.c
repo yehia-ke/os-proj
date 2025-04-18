@@ -2,33 +2,30 @@
 #include <stdio.h>
 
 PCB* running_process = NULL;  //Pointer to the currently running process
-PCB* processes[20];  //Turn this into a Queue
-int num_processes = 0;  //Number of processes in the array
+Queue* ready_queue = NULL;  //Queue for ready processes
 
-void add_process(PCB* process) {  //Function to add a process to the array
-    if (num_processes < 20) {  //Check if there is space in the array
-        processes[num_processes] = process;  //Add the process to the array
-        num_processes++;  //Increment the number of processes
-    } else {
-        printf("Error: Process limit reached.\n");  //If there is no space, print an error message
-    }
+void initialize_fcfs() {
+    ready_queue = queue_create();  // Initialize the ready queue
+}
+
+void fcfs_add_process(PCB* process) {  //Function to add a process to the ready queue
+    queue_enqueue(ready_queue, process);
 }
 
 char* run_fcfs() {
 
     // Check if the running process is not NULL
-    // if true, get the instruction from the running process
-    // If returns NULL, Update num_processes & Free the process from memory. Else,
-    // Return the instruction
+        // if true, get the instruction from the running process
+            // if returns NULL, Free the process from memory. 
+        // Else,
+            // Return the instruction
     // else
-
-    // Check if there are any processes in the queue
-    // If not, return NULL
-    // else
-
-    // Dequeue a process from ready queue
-    // Update the process state to "Running"
-    // Set the running process to the dequeued process
-    // Get instruction from the process
-    // Return the instruction
+        // Check if there aren't any processes in the queue using queue_is_empty
+            // If ture, return NULL
+        // else
+            // Dequeue a process from ready queue
+            // Update the process state to "Running"
+            // Set running_process to the dequeued process
+            // Get instruction from the process
+            // Return the instruction
 }

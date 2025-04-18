@@ -2,8 +2,10 @@
 #define FCFS_SCHEDULER_H
 #include <stdlib.h>
 #include "../pcb/pcb.h"
+#include "../queue/queue.h"
 
-void run_fcfs();
-void add_process(PCB* process);
+void initialize_fcfs();
+char* run_fcfs();
+void fcfs_add_process(PCB* process);
 
 #endif
