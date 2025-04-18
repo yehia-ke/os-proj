@@ -19,6 +19,7 @@ typedef struct {
 
 PCB* create_process(int pid, char* program_file, int arrival_time);
 void set_state(PCB* pcb, char* new_state);
+void set_priority(PCB* pcb, int new_priority);
 char* get_instruction(PCB* pcb);
 void set_variable(PCB* pcb, char* var_name, char* value);
 void free_process(PCB* pcb);
