@@ -14,18 +14,43 @@ void fcfs_add_process(PCB* process) {  //Function to add a process to the ready 
 
 char* run_fcfs() {
 
-    // Check if the running process is not NULL
-        // if true, get the instruction from the running process
-            // if returns NULL, Free the process from memory. 
-        // Else,
-            // Return the instruction
-    // else
-        // Check if there aren't any processes in the queue using queue_is_empty
-            // If ture, return NULL
-        // else
-            // Dequeue a process from ready queue
-            // Update the process state to "Running"
-            // Set running_process to the dequeued process
-            // Get instruction from the process
-            // Return the instruction
+    if (running_process != NULL) {
+
+        // Get the next instruction from the running process
+        char* instruction = get_instruction(running_process);
+
+        //If no more instructions: mark it done and free it
+        if (instruction == NULL) {
+            printf("Process %d Finished\n", running_process->pid);
+            free_process(running_process);
+            running_process = NULL;
+            return NULL;
+        } else {
+            //If there's still an instruction, return it and increment PC
+            printf("Process %d running: %s\n", running_process->pid, instruction);
+            running_process->pc++;
+            return instruction;
+        }
+    }
+
+    //If no process is running, check if the queue is empty
+    if (queue_is_empty(ready_queue)) {
+        return NULL;  
+    }
+
+    //If the queue isn't empty, start the next process
+    running_process = (PCB*)queue_dequeue(ready_queue);  // Get the next process
+    set_state(running_process, "Running");                // Set its state to running
+    printf("Process %d is starting\n", running_process->pid);
+
+    // Get its first instruction
+    char* instruction = get_instruction(running_process);
+    if (instruction != NULL) {
+        printf("Process %d running: %s\n", running_process->pid, instruction);
+        running_process->pc++;  // Move to next instruction for future calls
+    }
+
+    return instruction;  // Return the instruction (or NULL if none)
 }
+
+
