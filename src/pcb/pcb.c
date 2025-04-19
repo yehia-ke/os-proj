@@ -33,7 +33,7 @@ PCB* create_process(int pid, char* program_file, int arrival_time) {
     sprintf(temp, "PCB_PID:%d", pid);
     set_memory_word(mem_lower, temp);
 
-    sprintf(temp, "PCB_State:%d", "Ready");
+    sprintf(temp, "PCB_State:%s", "Ready");
     set_memory_word(mem_lower + 1, temp);
     
     sprintf(temp, "PCB_Priority:%d", 1);
