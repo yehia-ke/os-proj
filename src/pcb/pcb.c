@@ -1,5 +1,4 @@
 #include "pcb.h"
-//#include "../memory/memory.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -115,4 +114,8 @@ void free_process(PCB* pcb) {
     free_memory(pcb->mem_lower, total_words);
     free(pcb->state);
     free(pcb);
+}
+
+char* getPID(PCB* pcb) {
+    return get_memory_word(pcb->mem_lower);
 }

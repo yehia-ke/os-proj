@@ -1,5 +1,5 @@
-#ifndef MLFQ_SCHEDULER_H
-#define MLFQ_SCHEDULER_H
+#ifndef MLFQ_H
+#define MLFQ_H
 
 #include <stdlib.h>
 #include "../pcb/pcb.h"

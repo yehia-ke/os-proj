@@ -1,4 +1,4 @@
-#include "fcfs_scheduler.h"
+#include "fcfs.h"
 #include <stdio.h>
 
 PCB* running_process = NULL;  //Pointer to the currently running process

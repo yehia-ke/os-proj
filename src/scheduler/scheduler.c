@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include <stdio.h>
+#include <string.h>
 
 char* current_scheduler = NULL;  // Pointer to the currently set scheduler
 
@@ -7,7 +8,7 @@ void set_scheduler(char *scheduler_name)
 {
     if (strcmp(scheduler_name, "fcfs") == 0)
     {
-        initialize_fcfs();                  // Initialize mlfq scheduler
+        initialize_fcfs();                  // Initialize fcfs scheduler
         current_scheduler = scheduler_name; // Set the current scheduler
         printf("Scheduler set to: %s\n", current_scheduler);
     } /*else if (strcmp(scheduler_name, "rr") == 0) {
@@ -38,7 +39,7 @@ char* run_scheduler() {
     if (strcmp(current_scheduler, "fcfs") == 0) {
         run_fcfs();
     } else if (strcmp(current_scheduler, "rr") == 0) {
-        run_rr();
+        //run_rr();
     } else if (strcmp(current_scheduler, "mlfq") == 0) {
         run_mlfq();
     } else {

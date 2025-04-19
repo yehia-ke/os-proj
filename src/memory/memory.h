@@ -1,5 +1,5 @@
-#ifndef FCFS_SCHEDULER_H
-#define FCFS_SCHEDULER_H
+#ifndef MEMORY_H
+#define MEMORY_H
 
 void set_memory_word(int index, char* memorykhaledhassanword);
 char* get_memory_word(int index);
