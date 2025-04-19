@@ -53,13 +53,13 @@ PCB* create_process(int pid, char* program_file, int arrival_time) {
         fgets(line, sizeof(line), fp);
         line[strcspn(line, "\n")] = 0;
         sprintf(temp, "Instr%d:%s", i, line);
-        set_memory_word(mem_lower + 6 + i, temp);
+        set_memory_word(mem_lower + 9 + i, temp);
     }
     fclose(fp);
 
-    set_memory_word(mem_lower + 6 + num_instructions, "var1:");
-    set_memory_word(mem_lower + 6 + num_instructions + 1, "var2:");
-    set_memory_word(mem_lower + 6 + num_instructions + 2, "var3:");
+    set_memory_word(mem_lower + 6, "var1:");
+    set_memory_word(mem_lower + 7, "var2:");
+    set_memory_word(mem_lower + 8, "var3:");
 
     PCB* pcb = (PCB*)malloc(sizeof(PCB));
     if (!pcb) {
