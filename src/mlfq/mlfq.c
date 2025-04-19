@@ -18,7 +18,7 @@ void mlfq_add_process(PCB* process) {
     queue_enqueue(ready_queue[0], process);
 }
 
-char* run_mlfq() {
+void run_mlfq() {
     if (running_process != NULL) {
         // Get the next instruction from the running process
         char* instruction = get_instruction(running_process);
@@ -29,7 +29,7 @@ char* run_mlfq() {
             set_state(running_process, "Terminated"); // Set state to Terminated
             free_process(running_process);
             running_process = NULL;
-            return NULL;
+            return;
         } else {
             // If there's still an instruction, return it and increment PC
             printf("Process %d running: %s\n", running_process->pid, instruction);
@@ -52,7 +52,7 @@ char* run_mlfq() {
                 time_slice = 0;  // Reset time slice
             }
             
-            return instruction;
+            execute_instruction(instruction, running_process);  // Execute the instruction
         }
     }
 
@@ -105,13 +105,13 @@ char* run_mlfq() {
             time_slice = 0;  // Reset time slice
         }
 
-        return instruction;
+        execute_instruction(instruction, running_process);  // Execute the instruction
     }
     else {
         printf("No instruction to run... Terminating\n");
         set_state(running_process, "Terminated"); // Set state to Terminated
         free_process(running_process);
         running_process = NULL;
-        return NULL;
+        return;
     }
 }
