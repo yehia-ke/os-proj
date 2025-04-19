@@ -22,6 +22,7 @@ char* run_fcfs() {
         //If no more instructions: mark it done and free it
         if (instruction == NULL) {
             printf("Process %d Finished\n", running_process->pid);
+            set_state(running_process, "Terminated");  // Set the process state to Terminated
             free_process(running_process);
             running_process = NULL;
             return NULL;
@@ -48,9 +49,14 @@ char* run_fcfs() {
     if (instruction != NULL) {
         printf("Process %d running: %s\n", running_process->pid, instruction);
         running_process->pc++;  // Move to next instruction for future calls
+        return instruction;  // Return the instruction
+    } else {
+        printf("Process %d Finished\n", running_process->pid);
+        set_state(running_process, "Terminated");  // Set the process state to Terminated
+        free_process(running_process);
+        running_process = NULL;
+        return NULL;
     }
-
-    return instruction;  // Return the instruction (or NULL if none)
 }
 
 
