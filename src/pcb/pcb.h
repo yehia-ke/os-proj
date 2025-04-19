@@ -3,11 +3,6 @@
 
 #include <stdlib.h>
 
-#define STATE_READY "Ready"
-#define STATE_RUNNING "Running"
-#define STATE_BLOCKED "Blocked"
-#define STATE_WAITING "Waiting"
-
 typedef struct {
     int pid;
     char* state;
