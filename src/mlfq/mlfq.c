@@ -26,6 +26,7 @@ char* run_mlfq() {
         // If no more instructions: mark it done and free it
         if (instruction == NULL) {
             printf("Process %d Finished\n", running_process->pid);
+            set_state(running_process, "Terminated"); // Set state to Terminated
             free_process(running_process);
             running_process = NULL;
             return NULL;
@@ -103,7 +104,14 @@ char* run_mlfq() {
             running_process = NULL;
             time_slice = 0;  // Reset time slice
         }
-    }
 
-    return instruction;  // Return the instruction (or NULL if none)
+        return instruction;
+    }
+    else {
+        printf("No instruction to run... Terminating\n");
+        set_state(running_process, "Terminated"); // Set state to Terminated
+        free_process(running_process);
+        running_process = NULL;
+        return NULL;
+    }
 }
