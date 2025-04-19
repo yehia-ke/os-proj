@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "../pcb/pcb.h"
 #include "../queue/queue.h"
-//#include "../interpreter/interpreter.h"
+#include "../interpreter/interpreter.h"
 
 void initialize_fcfs();
 void run_fcfs();

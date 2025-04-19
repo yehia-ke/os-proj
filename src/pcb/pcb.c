@@ -4,9 +4,10 @@
 
 PCB* create_process(int pid, char* program_file, int arrival_time) {
     char file_path[256];
-    sprintf(file_path, "programs/%s", program_file);
+    sprintf(file_path, "../programs/%s", program_file);
     FILE* fp = fopen(file_path, "r");
     if (!fp) {
+        printf("%s\n", file_path);
         printf("Error: Could not open program file %s\n", program_file);
         return NULL;
     }

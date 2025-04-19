@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "../pcb/pcb.h"
 #include "../queue/queue.h"
-//#include "../interpreter/interpreter.h"
+#include "../interpreter/interpreter.h"
 
 void initialize_mlfq();
 void run_mlfq();
