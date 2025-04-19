@@ -14,7 +14,7 @@ void initialize_mem(){
 
 void free_memory(int i, int s){
     if(i>MEMSIZE || i<0){
-        printf("Input index value outisde scope of memory");
+        printf("Input index value outside scope of memory");
         return;
     }
     for(int k = i; k <=s; k++){
