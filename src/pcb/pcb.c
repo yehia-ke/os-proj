@@ -93,8 +93,8 @@ void set_priority(PCB* pcb, int new_priority) {
 }
 
 char* get_instruction(PCB* pcb) {
-    int instr_index = pcb->mem_lower + 6 + pcb->pc;
-    if (instr_index >= pcb->mem_upper - 3) return NULL;
+    int instr_index = pcb->mem_lower + 9 + pcb->pc;
+    if (instr_index > pcb->mem_upper) return NULL;
     char* word = get_memory_word(instr_index);
     if (!word) return NULL;
     char* colon = strchr(word, ':');
@@ -102,7 +102,7 @@ char* get_instruction(PCB* pcb) {
 }
 
 void set_variable(PCB* pcb, char* var_name, char* value) {
-    int var_offset = pcb->mem_upper - 2;
+    int var_offset = pcb->mem_lower + 6;
     int index = var_offset + (strcmp(var_name, "var1") == 0 ? 0 :
                              strcmp(var_name, "var2") == 0 ? 1 : 2);
     char temp[50];
