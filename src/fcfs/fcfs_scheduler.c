@@ -12,7 +12,7 @@ void fcfs_add_process(PCB* process) {  //Function to add a process to the ready 
     queue_enqueue(ready_queue, process);
 }
 
-char* run_fcfs() {
+void run_fcfs() {
 
     if (running_process != NULL) {
 
@@ -25,18 +25,18 @@ char* run_fcfs() {
             set_state(running_process, "Terminated");  // Set the process state to Terminated
             free_process(running_process);
             running_process = NULL;
-            return NULL;
+            return;
         } else {
             //If there's still an instruction, return it and increment PC
             printf("Process %d running: %s\n", running_process->pid, instruction);
             running_process->pc++;
-            return instruction;
+            execute_instruction(instruction, running_process);  // Execute the instruction
         }
     }
 
     //If no process is running, check if the queue is empty
     if (queue_is_empty(ready_queue)) {
-        return NULL;  
+        return;
     }
 
     //If the queue isn't empty, start the next process
@@ -49,13 +49,13 @@ char* run_fcfs() {
     if (instruction != NULL) {
         printf("Process %d running: %s\n", running_process->pid, instruction);
         running_process->pc++;  // Move to next instruction for future calls
-        return instruction;  // Return the instruction
+        execute_instruction(instruction, running_process);  // Execute the instruction
     } else {
         printf("Process %d Finished\n", running_process->pid);
         set_state(running_process, "Terminated");  // Set the process state to Terminated
         free_process(running_process);
         running_process = NULL;
-        return NULL;
+        return;
     }
 }
 
