@@ -116,7 +116,3 @@ void free_process(PCB* pcb) {
     free(pcb->state);
     free(pcb);
 }
-
-char* getPID(PCB* pcb) {
-    return get_memory_word(pcb->mem_lower);
-}

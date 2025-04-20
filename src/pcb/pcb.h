@@ -19,5 +19,4 @@ void set_priority(PCB* pcb, int new_priority);
 char* get_instruction(PCB* pcb);
 void set_variable(PCB* pcb, char* var_name, char* value);
 void free_process(PCB* pcb);
-char* getPID(PCB* pcb);
 #endif

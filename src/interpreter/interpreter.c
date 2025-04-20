@@ -30,13 +30,16 @@ void execute_instruction(char *instruction, PCB *process)
         else if (strcmp(arg1, "file") == 0)
             target_mutex = &file;
 
-        if (target_mutex && is_owner(target_mutex, process))
+        if (target_mutex)
         {
-            printf("Mutex %s acquired by process %d\n", arg1, process->pid);
-        }
-        else
-        {
-            printf("Process %d waiting for mutex %s\n", process->pid, arg1);
+            if (is_owner(target_mutex, process))
+            {
+                printf("Mutex %s acquired by process %d\n", arg1, process->pid);
+            }
+            else
+            {
+                printf("Process %d waiting for mutex %s\n", process->pid, arg1);
+            }
         }
     }
     else if (strcmp(command, "semSignal") == 0)
@@ -50,14 +53,21 @@ void execute_instruction(char *instruction, PCB *process)
         else if (strcmp(arg1, "file") == 0)
             target_mutex = &file;
 
-        if (target_mutex && strcmp(target_mutex->owner, getPID(process)) == 0)
+        if (target_mutex)
         {
-            memset(target_mutex->owner, 0, sizeof(target_mutex->owner));
-            printf("Mutex %s released by process %d\n", arg1, process->pid);
-        }
-        else
-        {
-            printf("Process %d cannot release mutex %s as it is not the owner\n", process->pid, arg1);
+            char tmp[50];
+            sprintf(tmp, "%d", process->pid); // Format PCB pid as a string
+
+            // Check if the current process is the owner
+            if (strcmp(target_mutex->owner, tmp) == 0)
+            {
+                memset(target_mutex->owner, 0, sizeof(target_mutex->owner)); // Clear the owner
+                printf("Mutex %s released by process %d\n", arg1, process->pid);
+            }
+            else
+            {
+                printf("Process %d cannot release mutex %s as it is not the owner\n", process->pid, arg1);
+            }
         }
     }
     else if (strcmp(command, "assign") == 0)

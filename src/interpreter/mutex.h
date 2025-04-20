@@ -2,6 +2,8 @@
 #define MUTEX_H
 
 #include "../pcb/pcb.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
     char owner[50];

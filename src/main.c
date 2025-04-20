@@ -92,8 +92,22 @@ int main()
         printf("Invalid program choice! Exiting...\n");
         return 1;
     }
+    add_process_to_scheduler(selected_program);
+    run_scheduler();
 
-    // Step 3: Execute the Selected Program
-    execute_program(selected_program);
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    run_scheduler();
+    //execute_program(selected_program);
     return 0;
 }
