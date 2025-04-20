@@ -9,6 +9,10 @@ extern Mutex userInput;
 extern Mutex userOutput;
 extern Mutex file;
 
+char* get_word(int index){
+    char* word = get_memory_word(index);
+    return strchr(word, ':') ? strchr(word, ':') + 1 : NULL;
+}
 void execute_instruction(char *instruction, PCB *process) {
     char command[50], arg1[50], arg2[50];
     sscanf(instruction, "%s %s %s", command, arg1, arg2);
@@ -43,23 +47,24 @@ void execute_instruction(char *instruction, PCB *process) {
     else if (strcmp(command, "assign") == 0) {
         if (strcmp(arg1, "a") == 0 && strcmp(arg2, "input") == 0) {
             // Assign user input to var1
-            printf("Please enter a value for var1: ");
+            printf("Please enter a value for a: ");
             char value[50];
             scanf("%s", value);
+            printf("%s\n",value);
             set_variable(process, "var1", value);
         } else if (strcmp(arg1, "b") == 0 && strcmp(arg2, "input") == 0) {
             // Assign user input to var2
-            printf("Please enter a value for var2: ");
+            printf("Please enter a value for b: ");
             char value[50];
             scanf("%s", value);
             set_variable(process, "var2", value);
         } else if (strcmp(arg1, "a") == 0 && strcmp(arg2, "b") == 0) {
             // Assign value of var2 to var1
-            char *value = get_memory_word(process->mem_lower + 7); // var2
+            char *value = get_word(process->mem_lower + 7); // var2
             set_variable(process, "var1", value);
         } else if (strcmp(arg1, "b") == 0 && strcmp(arg2, "a") == 0) {
             // Assign value of var1 to var2
-            char *value = get_memory_word(process->mem_lower + 6); // var1
+            char *value = get_word(process->mem_lower + 6); // var1
             set_variable(process, "var2", value);
         } else {
             set_variable(process, arg1, arg2);
@@ -69,11 +74,11 @@ void execute_instruction(char *instruction, PCB *process) {
         char *value = NULL;
 
         if (strcmp(arg1, "var1") == 0) {
-            value = get_memory_word(process->mem_lower + 6); // var1
+            value = get_word(process->mem_lower + 6); // var1
         } else if (strcmp(arg1, "var2") == 0) {
-            value = get_memory_word(process->mem_lower + 7); // var2
+            value = get_word(process->mem_lower + 7); // var2
         } else if (strcmp(arg1, "var3") == 0) {
-            value = get_memory_word(process->mem_lower + 8); // var3;
+            value = get_word(process->mem_lower + 8); // var3;
         }
 
         if (value) {
@@ -81,8 +86,8 @@ void execute_instruction(char *instruction, PCB *process) {
         }
     }
     else if (strcmp(command, "printFromTo") == 0) {
-        int start = atoi(get_memory_word(process->mem_lower + 6)); // var1
-        int end = atoi(get_memory_word(process->mem_lower + 7));   // var2
+        int start = atoi(get_word(process->mem_lower + 6)); // var1
+        int end = atoi(get_word(process->mem_lower + 7));   // var2
         printf("Output: ");
         for (int i = start; i <= end; i++) {
             printf("%d ", i);
@@ -90,8 +95,8 @@ void execute_instruction(char *instruction, PCB *process) {
         printf("\n");
     }
     else if (strcmp(command, "writeFile") == 0) {
-        char *filename = get_memory_word(process->mem_lower + 6); // var1
-        char *data = get_memory_word(process->mem_lower + 7);     // var2
+        char *filename = get_word(process->mem_lower + 6); // var1
+        char *data = get_word(process->mem_lower + 7);     // var2
         FILE *fp = fopen(filename, "w");
         if (fp) {
             fprintf(fp, "%s", data);
@@ -102,7 +107,7 @@ void execute_instruction(char *instruction, PCB *process) {
         }
     }
     else if (strcmp(command, "readFile") == 0) {
-        char *filename = get_memory_word(process->mem_lower + 6); // var1
+        char *filename = get_word(process->mem_lower + 6); // var1
         FILE *fp = fopen(filename, "r");
         if (fp) {
             char buffer[256];
