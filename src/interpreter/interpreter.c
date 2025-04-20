@@ -41,11 +41,26 @@ void execute_instruction(char *instruction, PCB *process) {
         }
     }
     else if (strcmp(command, "assign") == 0) {
-        if (strcmp(arg2, "input") == 0) {
-            printf("Please enter a value for %s: ", arg1);
+        if (strcmp(arg1, "a") == 0 && strcmp(arg2, "input") == 0) {
+            // Assign user input to var1
+            printf("Please enter a value for var1: ");
             char value[50];
             scanf("%s", value);
-            set_variable(process, arg1, value);
+            set_variable(process, "var1", value);
+        } else if (strcmp(arg1, "b") == 0 && strcmp(arg2, "input") == 0) {
+            // Assign user input to var2
+            printf("Please enter a value for var2: ");
+            char value[50];
+            scanf("%s", value);
+            set_variable(process, "var2", value);
+        } else if (strcmp(arg1, "a") == 0 && strcmp(arg2, "b") == 0) {
+            // Assign value of var2 to var1
+            char *value = get_memory_word(process->mem_lower + 7); // var2
+            set_variable(process, "var1", value);
+        } else if (strcmp(arg1, "b") == 0 && strcmp(arg2, "a") == 0) {
+            // Assign value of var1 to var2
+            char *value = get_memory_word(process->mem_lower + 6); // var1
+            set_variable(process, "var2", value);
         } else {
             set_variable(process, arg1, arg2);
         }
