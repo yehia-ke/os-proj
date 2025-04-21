@@ -2,11 +2,7 @@
 #define PCB_H
 
 #include <stdlib.h>
-
-#define STATE_READY "Ready"
-#define STATE_RUNNING "Running"
-#define STATE_BLOCKED "Blocked"
-#define STATE_WAITING "Waiting"
+#include "../memory/memory.h"
 
 typedef struct {
     int pid;
@@ -23,5 +19,4 @@ void set_priority(PCB* pcb, int new_priority);
 char* get_instruction(PCB* pcb);
 void set_variable(PCB* pcb, char* var_name, char* value);
 void free_process(PCB* pcb);
-
 #endif
