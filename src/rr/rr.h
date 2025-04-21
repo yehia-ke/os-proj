@@ -1,10 +1,11 @@
-#ifndef ROUND_ROBIN_H
-#define ROUND_ROBIN_H
+#ifndef ROUND_ROBIN_SCHEDULER_H
+#define ROUND_ROBIN_SCHEDULER_H
 
-#include "pcb.h"
-#include "queue.h"
+#include "../pcb/pcb.h"
+#include "../queue/queue.h"
 
-// Scheduler function
-void roundRobinScheduler(Queue* readyQueue, int timeQuantum, int* clockCycle);
+void initialize_round_robin(int quantum);
+char* run_round_robin();
+void round_robin_add_process(PCB* process);
 
 #endif
