@@ -1,13 +1,17 @@
-#ifndef MLFQ_SCHEDULER_H
-#define MLFQ_SCHEDULER_H
+#ifndef MLFQ_H
+#define MLFQ_H
 
 #include <stdlib.h>
+#include <string.h>
 #include "../pcb/pcb.h"
 #include "../queue/queue.h"
-//#include "../interpreter/interpreter.h"
+#include "../interpreter/interpreter.h"
+#include "../interpreter/mutex.h"
 
 void initialize_mlfq();
 void run_mlfq();
 void mlfq_add_process(PCB* process);
+void mlfq_wait(char mutex_name[]);
+void mlfq_signal(char mutex_name[]);
 
 #endif
