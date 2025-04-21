@@ -1,4 +1,5 @@
 #include "../pcb/pcb.h"
+#include "../scheduler/scheduler.h"
 #include "mutex.h"
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +39,10 @@ void execute_instruction(char *instruction, PCB *process)
             }
             else
             {
-                printf("Process %d waiting for mutex %s\n", process->pid, arg1);
+                printf("Process %d waiting for mutex %s.\n Putting process %d in waiting queue", 
+                    process->pid, arg1, process->pid);
+
+                scheduler_wait(arg1); // Wait for the mutex to be released
             }
         }
     }
@@ -63,6 +67,7 @@ void execute_instruction(char *instruction, PCB *process)
             {
                 memset(target_mutex->owner, 0, sizeof(target_mutex->owner)); // Clear the owner
                 printf("Mutex %s released by process %d\n", arg1, process->pid);
+                scheduler_signal(arg1); // Signal the mutex
             }
             else
             {

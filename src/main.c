@@ -38,7 +38,7 @@ int main()
     // Step 1: Choose Scheduler
     initialize_mem();
     char scheduler_choice[10];
-    printf("Choose a scheduler (fcfs, mlfq): ");
+    printf("Choose a scheduler (fcfs, mlfq, rr): ");
     if (scanf("%9s", scheduler_choice) != 1)
     {
         printf("Invalid input! Exiting...\n");
@@ -52,6 +52,10 @@ int main()
     else if (strcmp(scheduler_choice, "mlfq") == 0)
     {
         set_scheduler("mlfq");
+    }
+    else if (strcmp(scheduler_choice, "rr") == 0)
+    {
+        set_scheduler("rr");
     }
     else
     {

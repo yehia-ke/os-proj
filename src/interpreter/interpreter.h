@@ -7,4 +7,4 @@
 // Function to execute a single instruction for a given process
 void execute_instruction(char *instruction, PCB *process);
 
-#endif // INTERPRETER_H
+#endif
