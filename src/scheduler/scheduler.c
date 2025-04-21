@@ -39,7 +39,7 @@ char* run_scheduler() {
     if (strcmp(current_scheduler, "fcfs") == 0) {
         run_fcfs();
     } else if (strcmp(current_scheduler, "rr") == 0) {
-        //run_rr();
+        run_rr();
     } else if (strcmp(current_scheduler, "mlfq") == 0) {
         run_mlfq();
     }
