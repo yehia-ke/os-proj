@@ -1,6 +1,8 @@
 #ifndef ROUND_ROBIN_SCHEDULER_H
 #define ROUND_ROBIN_SCHEDULER_H
 
+#include <string.h>
+
 #include "../pcb/pcb.h"
 #include "../queue/queue.h"
 #include "../interpreter/interpreter.h"
