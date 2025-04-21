@@ -3,9 +3,13 @@
 
 #include "../pcb/pcb.h"
 #include "../queue/queue.h"
+#include "../interpreter/interpreter.h"
+#include "../interpreter/mutex.h"
 
-void initialize_round_robin(int quantum);
-char* run_round_robin();
-void round_robin_add_process(PCB* process);
+void initialize_rr();
+void run_rr();
+void rr_add_process(PCB* process);
+void rr_wait(char mutex_name[]);
+void rr_signal(char mutex_name[]);
 
 #endif

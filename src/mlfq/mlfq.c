@@ -42,6 +42,7 @@ void mlfq_wait(char mutex_name[]) {
     }
 
     set_state(mlfq_running_process, "Waiting"); // Set the state to Waiting
+    mlfq_running_process->pc--; // Decrement the program counter to re-execute the instruction
     queue_enqueue(mlfq_waiting_queue[mutex_index], mlfq_running_process); // Enqueue the process in the waiting queue
     mlfq_running_process = NULL; // Clear the running process
 }

@@ -3,11 +3,13 @@
 
 PCB* running_process = NULL;  // Pointer to the currently running process
 Queue* ready_queue = NULL;    // Queue for ready processes
-Queue* waiting_queue = NULL; // Queue for waiting processes
+Queue* waiting_queue[3]; // Queue for waiting processes
 
 void initialize_fcfs() {
     ready_queue = queue_create(); // Initialize the ready queue
-    waiting_queue = queue_create(); // Initialize the waiting queue
+    for (int i = 0; i < 3; i++) {
+        waiting_queue[i] = queue_create(); // Initialize each waiting queue
+    }
 }
 
 void fcfs_add_process(PCB* process) {
@@ -34,7 +36,8 @@ void fcfs_wait(char mutex_name[]) {
     }
 
     set_state(running_process, "Waiting"); // Set the state to Waiting
-    queue_enqueue(waiting_queue, running_process); // Enqueue the process in the waiting queue
+    running_process->pc--; // Decrement the program counter to re-execute the instruction
+    queue_enqueue(waiting_queue[mutex_index], running_process); // Enqueue the process in the waiting queue
     running_process = NULL; // Clear the running process
 }
 
@@ -55,7 +58,7 @@ void fcfs_signal(char mutex_name[]) {
 
     // Dequeue all processes waiting on this mutex and enqueue them in the ready queue
     while (!queue_is_empty(waiting_queue)) {
-        PCB* waiting_process = (PCB*)queue_dequeue(waiting_queue); // Dequeue the first waiting process
+        PCB* waiting_process = (PCB*)queue_dequeue(waiting_queue[mutex_index]); // Dequeue the first waiting process
         queue_enqueue(ready_queue, waiting_process); // Enqueue it in the ready queue
         set_state(waiting_process, "Ready"); // Set its state to Ready
     }
