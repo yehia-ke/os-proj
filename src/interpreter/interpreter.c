@@ -1,258 +1,201 @@
+#include "../pcb/pcb.h"
+#include "mutex.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
-#include <ctype.h>
+#include <stdlib.h>
 
-#define PROGRAMS_FOLDER "../../programs/" // Define the folder where programs are stored
-#define MAX_VARIABLES 100 // Maximum number of variables that can be stored
-#define MAX_FILE_CONTENT 1024 // Maximum size for file content
+// Global Mutexes defined in mutex.c
+extern Mutex userInput;
+extern Mutex userOutput;
+extern Mutex file;
 
-// Mutexes for mutual exclusion
-pthread_mutex_t userInputMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t userOutputMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t fileMutex = PTHREAD_MUTEX_INITIALIZER;
-
-// Variable storage
-typedef struct {
-    char name[50];
-    char value[1024]; // Store values as strings to handle both text and numbers
-} Variable;
-
-Variable variables[MAX_VARIABLES];
-int variableCount = 0;
-
-// Function to get the value of a variable
-int getVariableValue(const char *name, char *value) {
-    for (int i = 0; i < variableCount; i++) {
-        if (strcmp(variables[i].name, name) == 0) {
-            strcpy(value, variables[i].value);
-            return 1; // Found
-        }
-    }
-    return 0; // Not found
+char *get_word(int index)
+{
+    char *word = get_memory_word(index);
+    return strchr(word, ':') ? strchr(word, ':') + 1 : NULL;
 }
+void execute_instruction(char *instruction, PCB *process)
+{
+    char command[50], arg1[50], arg2[50];
+    sscanf(instruction, "%s %s %s", command, arg1, arg2);
 
-// Function to set or update a variable's value
-void setVariableValue(const char *name, const char *value) {
-    for (int i = 0; i < variableCount; i++) {
-        if (strcmp(variables[i].name, name) == 0) {
-            strcpy(variables[i].value, value);
-            return;
+    if (strcmp(command, "semWait") == 0)
+    {
+        Mutex *target_mutex = NULL;
+
+        if (strcmp(arg1, "userInput") == 0)
+            target_mutex = &userInput;
+        else if (strcmp(arg1, "userOutput") == 0)
+            target_mutex = &userOutput;
+        else if (strcmp(arg1, "file") == 0)
+            target_mutex = &file;
+
+        if (target_mutex)
+        {
+            if (is_owner(target_mutex, process))
+            {
+                printf("Mutex %s acquired by process %d\n", arg1, process->pid);
+            }
+            else
+            {
+                printf("Process %d waiting for mutex %s\n", process->pid, arg1);
+            }
         }
     }
-    // If the variable doesn't exist, add it
-    if (variableCount < MAX_VARIABLES) {
-        strcpy(variables[variableCount].name, name);
-        strcpy(variables[variableCount].value, value);
-        variableCount++;
-    } else {
-        printf("Error: Maximum variable limit reached.\n");
-    }
-}
+    else if (strcmp(command, "semSignal") == 0)
+    {
+        Mutex *target_mutex = NULL;
 
-// Function to handle 'printFromTo'
-void printFromTo(const char *startVariable, const char *endVariable) {
-    int startValue, endValue;
-    char resolvedStart[1024], resolvedEnd[1024];
+        if (strcmp(arg1, "userInput") == 0)
+            target_mutex = &userInput;
+        else if (strcmp(arg1, "userOutput") == 0)
+            target_mutex = &userOutput;
+        else if (strcmp(arg1, "file") == 0)
+            target_mutex = &file;
 
-    // Resolve start value
-    if (getVariableValue(startVariable, resolvedStart)) {
-        startValue = atoi(resolvedStart);
-    } else {
-        startValue = atoi(startVariable); // Fallback to direct value
-    }
+        if (target_mutex)
+        {
+            char tmp[50];
+            sprintf(tmp, "%d", process->pid); // Format PCB pid as a string
 
-    // Resolve end value
-    if (getVariableValue(endVariable, resolvedEnd)) {
-        endValue = atoi(resolvedEnd);
-    } else {
-        endValue = atoi(endVariable); // Fallback to direct value
-    }
-
-    // Print values from start to end
-    if (startValue <= endValue) {
-        printf("Printing numbers from %d to %d:\n", startValue, endValue);
-        for (int i = startValue; i <= endValue; i++) {
-            printf("%d\n", i);
+            // Check if the current process is the owner
+            if (strcmp(target_mutex->owner, tmp) == 0)
+            {
+                memset(target_mutex->owner, 0, sizeof(target_mutex->owner)); // Clear the owner
+                printf("Mutex %s released by process %d\n", arg1, process->pid);
+            }
+            else
+            {
+                printf("Process %d cannot release mutex %s as it is not the owner\n", process->pid, arg1);
+            }
         }
-    } else {
-        printf("Error: Invalid range. Start (%d) is greater than end (%d).\n", startValue, endValue);
     }
-}
-
-// Function to handle 'writeFile'
-void writeFile(const char *filenameVariable, const char *dataVariable) {
-    char resolvedFilename[1024];
-    char resolvedData[1024];
-
-    // Resolve filename
-    if (!getVariableValue(filenameVariable, resolvedFilename)) {
-        printf("[ERROR] Variable '%s' not found. Cannot resolve filename.\n", filenameVariable);
-        return;
-    }
-
-    // Resolve data
-    if (!getVariableValue(dataVariable, resolvedData)) {
-        printf("[ERROR] Variable '%s' not found. Cannot resolve data.\n", dataVariable);
-        return;
-    }
-
-    char fullPath[512];
-    snprintf(fullPath, sizeof(fullPath), "%s%s", PROGRAMS_FOLDER, resolvedFilename);
-
-    // Check if file already exists
-    FILE *file = fopen(fullPath, "r");
-    if (file != NULL) {
-        fclose(file);
-        printf("[ERROR] File '%s' already exists. Operation aborted to prevent overwriting.\n", fullPath);
-        return;
-    }
-
-    // Write to the file
-    file = fopen(fullPath, "w");
-    if (file == NULL) {
-        perror("Error writing to file");
-        return;
-    }
-
-    fprintf(file, "%s", resolvedData);
-    fclose(file);
-
-    printf("[INFO] Successfully wrote to file '%s'.\n", fullPath);
-}
-
-// Function to handle 'readFile'
-char *readFile(const char *filename) {
-    char fullPath[512];
-    snprintf(fullPath, sizeof(fullPath), "%s%s", PROGRAMS_FOLDER, filename);
-
-    FILE *file = fopen(fullPath, "r");
-    if (file == NULL) {
-        perror("Error reading file");
-        return NULL;
-    }
-
-    char *content = (char *)malloc((MAX_FILE_CONTENT + 1) * sizeof(char));
-    if (content == NULL) {
-        perror("Memory allocation failed");
-        fclose(file);
-        return NULL;
-    }
-
-    size_t bytesRead = fread(content, sizeof(char), MAX_FILE_CONTENT, file);
-    content[bytesRead] = '\0';
-    fclose(file);
-
-    // Print the file contents
-    printf("[INFO] File Contents of '%s':\n%s\n", filename, content);
-
-    return content;
-}
-
-// Function to parse and execute a single command
-void executeCommand(char *command) {
-    char operation[50];
-    sscanf(command, "%s", operation);
-
-    if (strcmp(operation, "semWait") == 0) {
-        char resource[50];
-        sscanf(command, "semWait %s", resource);
-        if (strcmp(resource, "userInput") == 0) {
-            pthread_mutex_lock(&userInputMutex);
-        } else if (strcmp(resource, "userOutput") == 0) {
-            pthread_mutex_lock(&userOutputMutex);
-        } else if (strcmp(resource, "file") == 0) {
-            pthread_mutex_lock(&fileMutex);
+    else if (strcmp(command, "assign") == 0)
+    {
+        if (strcmp(arg1, "a") == 0 && strcmp(arg2, "input") == 0)
+        {
+            // Assign user input to var1
+            printf("Please enter a value for a: ");
+            char value[50];
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF)
+                ;
+            fgets(value, sizeof(value), stdin);
+            value[strcspn(value, "\n")] = '\0';
+            printf("%s\n", value);
+            set_variable(process, "var1", value);
         }
-    } else if (strcmp(operation, "semSignal") == 0) {
-        char resource[50];
-        sscanf(command, "semSignal %s", resource);
-        if (strcmp(resource, "userInput") == 0) {
-            pthread_mutex_unlock(&userInputMutex);
-        } else if (strcmp(resource, "userOutput") == 0) {
-            pthread_mutex_unlock(&userOutputMutex);
-        } else if (strcmp(resource, "file") == 0) {
-            pthread_mutex_unlock(&fileMutex);
+        else if (strcmp(arg1, "b") == 0 && strcmp(arg2, "input") == 0)
+        {
+            // Assign user input to var2
+            printf("Please enter a value for b: ");
+            char value[50];
+            int c;
+            fgets(value, sizeof(value), stdin);
+            value[strcspn(value, "\n")] = '\0';
+            printf("%s\n", value);
+            set_variable(process, "var2", value);
         }
-    } else if (strcmp(operation, "assign") == 0) {
-        char variable[50], valueOrOperation[50];
-        sscanf(command, "assign %s %s", variable, valueOrOperation);
-
-        if (strcmp(valueOrOperation, "input") == 0) {
-            // Get user input using fgets
-            printf("Please enter a value for %s: ", variable);
-            char inputValue[1024];
-            fgets(inputValue, sizeof(inputValue), stdin);
-            
-            // Remove the trailing newline character, if present
-            inputValue[strcspn(inputValue, "\n")] = '\0';
-
-            setVariableValue(variable, inputValue);
-            printf("[DEBUG] Assigned '%s' = '%s' (user input)\n", variable, inputValue);
-        } else {
-            // Handle constant value assignment
-            setVariableValue(variable, valueOrOperation);
-            printf("[DEBUG] Assigned '%s' = '%s' (constant value)\n", variable, valueOrOperation);
+        else if (strcmp(arg1, "b") == 0 && strncmp(arg2, "readFile", 8) == 0)
+        {
+            // Assign the result of readFile to b
+            char *filename = get_word(process->mem_lower + 6); // var1
+            FILE *fp = fopen(filename, "r");
+            if (fp)
+            {
+                char buffer[256] = {0};;
+                fread(buffer, sizeof(char), 255, fp);
+                buffer[255] = '\0'; // Ensure null-terminated string
+                fclose(fp);
+                set_variable(process, "var2", buffer); // Store in var2
+                printf("Data read from file %s\n", filename);
+            }
+            else
+            {
+                printf("Error: Could not open file %s for reading\n", filename);
+            }
         }
-    } else if (strcmp(operation, "writeFile") == 0) {
-        char filenameVariable[50], dataVariable[50];
-        if (sscanf(command, "writeFile %s %s", filenameVariable, dataVariable) == 2) {
-            writeFile(filenameVariable, dataVariable);
-        } else {
-            printf("[ERROR] Invalid syntax for writeFile. Expected format: 'writeFile <filenameVariable> <dataVariable>'.\n");
+        else if (strcmp(arg1, "a") == 0 && strcmp(arg2, "b") == 0)
+        {
+            // Assign value of var2 to var1
+            char *value = get_word(process->mem_lower + 7); // var2
+            set_variable(process, "var1", value);
         }
-    } else if (strcmp(operation, "printFromTo") == 0) {
-        char startVariable[50], endVariable[50];
-        if (sscanf(command, "printFromTo %s %s", startVariable, endVariable) == 2) {
-            printFromTo(startVariable, endVariable);
-        } else {
-            printf("[ERROR] Invalid syntax for printFromTo. Expected format: 'printFromTo <start> <end>'.\n");
+        else if (strcmp(arg1, "b") == 0 && strcmp(arg2, "a") == 0)
+        {
+            // Assign value of var1 to var2
+            char *value = get_word(process->mem_lower + 6); // var1
+            set_variable(process, "var2", value);
         }
-    } else if (strcmp(operation, "print") == 0) {
-        char value[50];
-        sscanf(command, "print %s", value);
-
-        char resolvedValue[1024];
-        if (getVariableValue(value, resolvedValue)) {
-            printf("%s\n", resolvedValue);
-        } else {
-            printf("%s\n", value); // Print as-is if not a variable
+        else
+        {
+            set_variable(process, arg1, arg2);
         }
-    } else {
-        printf("[ERROR] Unknown command: %s\n", command);
     }
-}
+    else if (strcmp(command, "print") == 0)
+    {
+        char *value = NULL;
 
-// Function to execute a program file
-void executeProgram(const char *filename) {
-    char fullPath[512];
-    snprintf(fullPath, sizeof(fullPath), "%s%s", PROGRAMS_FOLDER, filename);
+        if (strcmp(arg1, "a") == 0)
+        {
+            value = get_word(process->mem_lower + 6); // var1
+        }
+        else if (strcmp(arg1, "b") == 0)
+        {
+            value = get_word(process->mem_lower + 7); // var2
+        }
+        else if (strcmp(arg1, "c") == 0)
+        {
+            value = get_word(process->mem_lower + 8); // var3;
+        }
 
-    FILE *file = fopen(fullPath, "r");
-    if (file == NULL) {
-        printf("[ERROR] Could not open file. Path: %s\n", fullPath);
-        perror("Reason");
-        exit(EXIT_FAILURE);
+        if (value)
+        {
+            printf("Output: %s\n", value);
+        }
     }
-
-    char command[256];
-    while (fgets(command, sizeof(command), file)) {
-        command[strcspn(command, "\n")] = 0; // Remove newline
-        printf("[INFO] Executing: %s\n", command);
-        executeCommand(command);
+    else if (strcmp(command, "printFromTo") == 0)
+    {
+        int start = atoi(get_word(process->mem_lower + 6)); // var1
+        int end = atoi(get_word(process->mem_lower + 7));   // var2
+        printf("Output: ");
+        if (start > end){
+            for (int i = end; i <= start; i++)
+        {
+            printf("%d ", i);
+        }
+        }
+        else{
+        for (int i = start; i <= end; i++)
+        {
+            printf("%d ", i);
+        }
     }
-
-    fclose(file);
-}
-
-int main() {
-    char filename[256];
-    printf("Enter the filename of the program to execute (from '../../programs/' folder): ");
-    scanf("%s", filename);
-    getchar(); // Consume the newline character left by scanf
-
-    executeProgram(filename);
-
-    return 0;
+        printf("\n");
+    }
+    else if (strcmp(command, "writeFile") == 0)
+    {
+        char *filename = get_word(process->mem_lower + 6); // var1
+        char *data = get_word(process->mem_lower + 7);     // var2
+        FILE *fp = fopen(filename, "w");
+        if (fp)
+        {
+            fprintf(fp, "%s", data);
+            fclose(fp);
+            printf("Data written to file %s\n", filename);
+        }
+        else
+        {
+            printf("Error: Could not open file %s for writing\n", filename);
+        }
+    }
+    else if (strcmp(command, "exit") == 0)
+    {
+        printf("Process %d exiting...\n", process->pid);
+        free_process(process);
+    }
+    else
+    {
+        printf("Unknown command: %s\n", command);
+    }
 }

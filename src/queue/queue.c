@@ -1,7 +1,7 @@
 #include "queue.h"
 #include <stdlib.h>
 
-typedef struct {
+typedef struct Node {
     void* data;
     struct Node* next;
 } Node;
