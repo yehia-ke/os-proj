@@ -42,9 +42,6 @@ char* run_scheduler() {
         //run_rr();
     } else if (strcmp(current_scheduler, "mlfq") == 0) {
         run_mlfq();
-    } else {
-        printf("Unknown scheduler: %s\n", current_scheduler);
-        return NULL;
     }
 }
 
@@ -62,8 +59,39 @@ void add_process_to_scheduler(PCB *process) {
     }*/
     else if (strcmp(current_scheduler, "mlfq") == 0) {
         mlfq_add_process(process);
-    } else {
-        printf("Unknown scheduler: %s\n", current_scheduler);
+    }
+}
+
+void scheduler_wait(char mutex_name[]) {
+    if (current_scheduler == NULL) {
+        printf("No scheduler set.\n");
         return;
+    }
+
+    // Call the appropriate scheduler's wait function
+    if (strcmp(current_scheduler, "fcfs") == 0) {
+        fcfs_wait(mutex_name);
+    } /*else if (strcmp(current_scheduler, "rr") == 0) {
+        rr_wait(mutex_name);
+    }*/
+    else if (strcmp(current_scheduler, "mlfq") == 0) {
+        mlfq_wait(mutex_name);
+    }
+}
+
+void scheduler_signal(char mutex_name[]) {
+    if (current_scheduler == NULL) {
+        printf("No scheduler set.\n");
+        return;
+    }
+
+    // Call the appropriate scheduler's signal function
+    if (strcmp(current_scheduler, "fcfs") == 0) {
+        fcfs_signal(mutex_name);
+    } /*else if (strcmp(current_scheduler, "rr") == 0) {
+        rr_signal(mutex_name);
+    }*/
+    else if (strcmp(current_scheduler, "mlfq") == 0) {
+        mlfq_signal(mutex_name);
     }
 }
