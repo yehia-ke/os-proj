@@ -4,6 +4,8 @@
 #include "pcb/pcb.h"
 #include "interpreter/interpreter.h"
 #include "scheduler/scheduler.h"
+#include "AutomaticClock/AutomaticClock.h"
+#include "ManualClock/ManualClock.h"
 
 // Function to load a program from a file into a PCB
 PCB *load_program(const char *filename, int pid, int arrival_time)
@@ -63,7 +65,29 @@ int main()
         return 1;
     }
 
-    // Step 2: Choose Program to Run
+    // Step 2: Choose Clock Type (Automatic or Manual)
+    int use_automatic_clock;
+    printf("Choose clock type (0 for Manual, 1 for Automatic): ");
+    if (scanf("%d", &use_automatic_clock) != 1 || (use_automatic_clock != 0 && use_automatic_clock != 1))
+    {
+        printf("Invalid input! Exiting...\n");
+        return 1;
+    }
+
+    // Step 3: Initialize Clock
+    AutomaticClock* auto_clock = NULL;
+    ManualClock* manual_clock = NULL;
+    if (use_automatic_clock)
+    {
+        auto_clock = AutomaticClock_create(10.0); // 10 Hz Frequency for automatic clock
+        AutomaticClock_start(auto_clock);
+    }
+    else
+    {
+        manual_clock = ManualClock_create();
+    }
+
+    // Step 4: Choose Program to Run
     int program_choice;
 
     // Clear input buffer after the first scanf
@@ -74,7 +98,8 @@ int main()
     printf("2. Program 2\n");
     printf("3. Program 3\n");
     printf("Enter the program number you want to execute: ");
-    if (scanf("%d", &program_choice) != 1) { // Check if scanf reads an integer
+    if (scanf("%d", &program_choice) != 1)
+    {
         printf("Invalid input! Please enter a valid program number.\n");
         return 1;
     }
@@ -96,22 +121,39 @@ int main()
         printf("Invalid program choice! Exiting...\n");
         return 1;
     }
-    add_process_to_scheduler(selected_program);
-    run_scheduler();
 
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    run_scheduler();
-    //execute_program(selected_program);
+    add_process_to_scheduler(selected_program);
+    
+    // Simulate the process running, either automatically or manually
+    for (int cycle = 0; cycle < 10; ++cycle)
+    {
+        if (use_automatic_clock && auto_clock)
+        {
+            // Automatic clock updates and prints PCB every cycle
+            double current_time = cycle * 0.1; // Example, assuming 0.1s per cycle
+            AutomaticClock_update(auto_clock, current_time);
+            printf("Cycle %d - Automatic Clock: %d\n", cycle, AutomaticClock_getCycle(auto_clock));
+        }
+        else if (manual_clock)
+        {
+            // Manual clock ticks each time you decide
+            ManualClock_tick(manual_clock);
+            printf("Cycle %d - Manual Clock: %d\n", cycle, ManualClock_getCycle(manual_clock));
+        }
+
+        //printPCB(selected_program); // Print the current PCB state
+        run_scheduler();
+    }
+
+    // Clean up
+    if (auto_clock)
+    {
+        AutomaticClock_destroy(auto_clock);
+    }
+    if (manual_clock)
+    {
+        ManualClock_destroy(manual_clock);
+    }
+
     return 0;
 }
