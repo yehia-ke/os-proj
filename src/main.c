@@ -27,7 +27,7 @@ void execute_program(PCB *process)
     {
         printf("Executing: %s\n", instruction);
         execute_instruction(instruction, process);
-        process->pc++; // Advance the program counter
+        increment_pc(process); // Advance the program counter
     }
     printf("--- Process %d Execution Complete ---\n", process->pid);
     free_process(process);

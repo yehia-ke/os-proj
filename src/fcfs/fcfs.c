@@ -36,7 +36,7 @@ void fcfs_wait(char mutex_name[]) {
     }
 
     set_state(fcfs_running_process, "Waiting"); // Set the state to Waiting
-    fcfs_running_process->pc--; // Decrement the program counter to re-execute the instruction
+    decrement_pc(fcfs_running_process); // Decrement the program counter to re-execute the instruction
     queue_enqueue(fcfs_waiting_queue[mutex_index], fcfs_running_process); // Enqueue the process in the waiting queue
     fcfs_running_process = NULL; // Clear the running process
 }
@@ -75,7 +75,7 @@ void run_fcfs() {
             return;
         } else {
             printf("Process %d running: %s\n", fcfs_running_process->pid, instruction);
-            fcfs_running_process->pc++;
+            increment_pc(fcfs_running_process);
             execute_instruction(instruction, fcfs_running_process);
         }
     }
@@ -88,7 +88,7 @@ void run_fcfs() {
         char* instruction = get_instruction(fcfs_running_process);
         if (instruction != NULL) {
             printf("Process %d running: %s\n", fcfs_running_process->pid, instruction);
-            fcfs_running_process->pc++;
+            increment_pc(fcfs_running_process);
             execute_instruction(instruction, fcfs_running_process);
         } else {
             printf("Process %d Finished\n", fcfs_running_process->pid);

@@ -42,7 +42,7 @@ void mlfq_wait(char mutex_name[]) {
     }
 
     set_state(mlfq_running_process, "Waiting"); // Set the state to Waiting
-    mlfq_running_process->pc--; // Decrement the program counter to re-execute the instruction
+    decrement_pc(mlfq_running_process); // Decrement the program counter to re-execute the instruction
     queue_enqueue(mlfq_waiting_queue[mutex_index], mlfq_running_process); // Enqueue the process in the waiting queue
     mlfq_running_process = NULL; // Clear the running process
 }
@@ -87,7 +87,7 @@ void run_mlfq() {
         } else {
             // If there's still an instruction, return it and increment PC
             printf("Process %d running: %s\n", mlfq_running_process->pid, instruction);
-            mlfq_running_process->pc++;
+            increment_pc(mlfq_running_process);
             time_slice++;
             execute_instruction(instruction, mlfq_running_process);  // Execute the instruction
 
@@ -139,7 +139,7 @@ void run_mlfq() {
     char* instruction = get_instruction(mlfq_running_process);
     if (instruction != NULL) {
         printf("Process %d running: %s\n", mlfq_running_process->pid, instruction);
-        mlfq_running_process->pc++;  // Move to next instruction for future calls
+        increment_pc(mlfq_running_process);
         time_slice++;
         execute_instruction(instruction, mlfq_running_process);  // Execute the instruction
 

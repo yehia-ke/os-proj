@@ -34,7 +34,7 @@ void run_rr() {
         }
 
         printf("Process %d running: %s\n", rr_running_process->pid, instruction);
-        rr_running_process->pc++;
+        increment_pc(rr_running_process);
         rr_time_slice++;
 
         execute_instruction(instruction, rr_running_process);  // Execute the instruction
@@ -62,7 +62,7 @@ void run_rr() {
     char* instruction = get_instruction(rr_running_process);
     if (instruction != NULL) {
         printf("Process %d running: %s\n", rr_running_process->pid, instruction);
-        rr_running_process->pc++;  // Move to next instruction for future calls
+        increment_pc(rr_running_process);
         rr_time_slice++;
         execute_instruction(instruction, rr_running_process);  // Execute the instruction
 
@@ -103,7 +103,7 @@ void rr_wait(char mutex_name[]) {
     }
 
     set_state(rr_running_process, "Waiting"); // Set the state to Waiting
-    rr_running_process->pc--; // Decrement the program counter to re-execute the instruction
+    decrement_pc(rr_running_process); // Decrement the program counter
     queue_enqueue(rr_waiting_queue[mutex_index], rr_running_process); // Enqueue the process in the waiting queue
     rr_running_process = NULL; // Clear the running process
 }

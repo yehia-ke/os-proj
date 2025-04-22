@@ -116,3 +116,19 @@ void free_process(PCB* pcb) {
     free(pcb->state);
     free(pcb);
 }
+
+void increment_pc(PCB* pcb) {
+    pcb->pc++;
+    char temp[50];
+    sprintf(temp, "PCB_PC:%d", pcb->pc);
+    set_memory_word(pcb->mem_lower + 3, temp);
+}
+
+void decrement_pc(PCB* pcb) {
+    if (pcb->pc > 0) {
+        pcb->pc--;
+        char temp[50];
+        sprintf(temp, "PCB_PC:%d", pcb->pc);
+        set_memory_word(pcb->mem_lower + 3, temp);
+    }
+}
