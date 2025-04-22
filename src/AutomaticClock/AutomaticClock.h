@@ -1,6 +1,8 @@
 #ifndef AUTOMATICCLOCK_H
 #define AUTOMATICCLOCK_H
 
+#include <math.h>
+
 // Automatic Clock structure
 typedef struct {
     int current_cycle;       // Current clock cycle count

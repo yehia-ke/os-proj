@@ -25,7 +25,7 @@ int AutomaticClock_update(AutomaticClock* clock, double current_time) {
     
     double time_per_cycle = 1.0 / clock->frequency;
     double elapsed = current_time - clock->last_tick_time;
-    int cycles_to_execute = (int)floor(elapsed / time_per_cycle);
+    int cycles_to_execute = (int) (elapsed / time_per_cycle);
     
     if (cycles_to_execute > 0) {
         clock->current_cycle += cycles_to_execute;
