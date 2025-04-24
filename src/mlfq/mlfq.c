@@ -6,6 +6,8 @@ Queue* mlfq_ready_queue[4];  // Array of queues for each priority level
 Queue* mlfq_waiting_queue[3]; // Array of queues for processes waiting for mutex variable i
 int time_quantum[4] = {1, 2, 4, 8};  // Time quantum for each priority level
 
+Queue* mlfq_process_queue = NULL;
+
 int time_slice = 0;  // Time slice counter
 
 void initialize_mlfq() {
@@ -21,6 +23,7 @@ void initialize_mlfq() {
 void mlfq_add_process(PCB* process) {
     // Add the process to the highest priority queue (0)
     queue_enqueue(mlfq_ready_queue[0], process);
+    queue_enqueue(mlfq_process_queue, process); // Add to the process queue
 }
 
 void mlfq_wait(char mutex_name[]) {
@@ -164,6 +167,12 @@ void run_mlfq() {
         set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
         free_process(mlfq_running_process);
         mlfq_running_process = NULL;
+        queue_dequeue(mlfq_process_queue);
         return;
     }
+}
+
+Queue* mlfq_get_process_queue()
+{
+    return mlfq_process_queue; // Return the highest priority queue
 }

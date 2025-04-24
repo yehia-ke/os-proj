@@ -5,7 +5,8 @@ PCB* rr_running_process = NULL;   // Pointer to the currently running process
 Queue* rr_ready_queue = NULL;     // Queue for ready processes
 Queue* rr_waiting_queue[3];   // Queue for waiting processes
 int rr_time_quantum = 2;          // Default time quantum
-int rr_time_slice = 0;            // Time slice counter
+int rr_time_slice = 0;   
+Queue* rr_process_queue = NULL;         // Time slice counter
 
 void initialize_rr() {
     rr_ready_queue = queue_create();  // Initialize the ready queue
@@ -17,6 +18,7 @@ void initialize_rr() {
 void rr_add_process(PCB* process) {
     set_state(process, "Ready");
     queue_enqueue(rr_ready_queue, process);
+    queue_enqueue(rr_process_queue, process); // Add to the process queue
 }
 
 void run_rr() {
@@ -80,6 +82,7 @@ void run_rr() {
         set_state(rr_running_process, "Terminated"); // Set state to Terminated
         free_process(rr_running_process);
         rr_running_process = NULL;
+        queue_dequeue(rr_process_queue);
         return;
     }
 }
@@ -132,3 +135,9 @@ void rr_signal(char mutex_name[]) {
         set_state(waiting_process, "Ready"); // Set its state to Ready
     }
 }
+
+Queue* rr_get_process_queue() {
+    return rr_process_queue; // Return the process queue
+}
+
+

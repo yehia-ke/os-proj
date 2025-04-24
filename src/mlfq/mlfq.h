@@ -13,5 +13,6 @@ void run_mlfq();
 void mlfq_add_process(PCB* process);
 void mlfq_wait(char mutex_name[]);
 void mlfq_signal(char mutex_name[]);
+Queue* mlfq_get_process_queue();
 
 #endif
