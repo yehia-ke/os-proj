@@ -3,7 +3,6 @@
 #include <string.h>
 
 PCB* create_process(int pid, char* program_file, int arrival_time) {
-    printf("ya");
     char file_path[256];
     sprintf(file_path, "../programs/%s", program_file);
     FILE* fp = fopen(file_path, "r");
@@ -12,14 +11,14 @@ PCB* create_process(int pid, char* program_file, int arrival_time) {
         printf("Error: Could not open program file %s\n", program_file);
         return NULL;
     }
-    printf("1");
+
     int num_instructions = 0;
     char line[100];
     while (fgets(line, sizeof(line), fp)) {
         num_instructions++;
     }
     fclose(fp);
-    printf("2");
+
     int total_words = 6 + num_instructions + 3;  // PCB + instructions + variables
     int mem_lower = allocate_memory(total_words);
     if (mem_lower == -1) {
@@ -27,7 +26,7 @@ PCB* create_process(int pid, char* program_file, int arrival_time) {
         return NULL;
     }
     int mem_upper = mem_lower + total_words - 1;
-    printf("3");
+
     char temp[200];
 
     sprintf(temp, "PCB_PID:%d", pid);
@@ -48,7 +47,6 @@ PCB* create_process(int pid, char* program_file, int arrival_time) {
     sprintf(temp, "PCB_MemUpper:%d", mem_upper);
     set_memory_word(mem_lower + 5, temp);
     
-    printf("4");
     fp = fopen(file_path, "r");
     for (int i = 0; i < num_instructions; i++) {
         fgets(line, sizeof(line), fp);
@@ -57,11 +55,11 @@ PCB* create_process(int pid, char* program_file, int arrival_time) {
         set_memory_word(mem_lower + 9 + i, temp);
     }
     fclose(fp);
-    printf("5");
+
     set_memory_word(mem_lower + 6, "var1:");
     set_memory_word(mem_lower + 7, "var2:");
     set_memory_word(mem_lower + 8, "var3:");
-    printf("6");
+
     PCB* pcb = (PCB*)malloc(sizeof(PCB));
     if (!pcb) {
         printf("Error: Failed to allocate PCB struct\n");
@@ -73,7 +71,6 @@ PCB* create_process(int pid, char* program_file, int arrival_time) {
     pcb->pc = 0;
     pcb->mem_lower = mem_lower;
     pcb->mem_upper = mem_upper;
-    pcb->arrival_time = arrival_time;
     printf("7");
     printf("Process %d created at memory [%d, %d]\n", pid, mem_lower, mem_upper);
     return pcb;

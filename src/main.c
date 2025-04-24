@@ -68,11 +68,6 @@ int main()
 
     // Step 4: Load Programs
     PCB *programs[3];
-    programs[0] = load_program("Program_1.txt", 1, 0);   // Arrives at cycle 0
-    programs[1] = load_program("Program_2.txt", 2, 5);   // Arrives at cycle 5
-    programs[2] = load_program("Program_3.txt", 3, 10);  // Arrives at cycle 10
-
-    int added[3] = {0, 0, 0}; // Flags to check if the program has been added
 
     // Step 5: Run Simulation Loop
     while (1)
@@ -92,17 +87,21 @@ int main()
             printf("Cycle %d - Manual Clock\n", current_cycle);
         }
 
-        // Check for program arrivals and add them to the scheduler
-        for (int i = 0; i < 3; i++)
+        if (current_cycle == 1)
         {
-            if (!added[i] && programs[i]->arrival_time <= current_cycle)
-            {
-                add_process_to_scheduler(programs[i]);
-                added[i] = 1;
-                printf("Program %d added to scheduler at cycle %d\n", programs[i]->pid, current_cycle);
-            }
+            programs[0] = load_program("Program_1.txt", 1, 0);   // Arrives at cycle 0
+            add_process_to_scheduler(programs[0]);
         }
-
+        else if (current_cycle == 5)
+        {
+            programs[1] = load_program("Program_2.txt", 2, 5);   // Arrives at cycle 5
+            add_process_to_scheduler(programs[1]);
+        }
+        else if (current_cycle == 10)
+        {
+            programs[2] = load_program("Program_3.txt", 3, 10);  // Arrives at cycle 10
+            add_process_to_scheduler(programs[2]);
+        }
         // Run the scheduler for one cycle
         run_scheduler(); 
     }
