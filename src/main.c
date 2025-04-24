@@ -19,25 +19,6 @@ PCB *load_program(const char *filename, int pid, int arrival_time)
     return process;
 }
 
-<<<<<<< HEAD
-// Function to simulate the execution of a process
-void execute_program(PCB *process)
-{
-    printf("\n--- Executing Process %d ---\n", process->pid);
-    char *instruction = NULL;
-
-    while ((instruction = get_instruction(process)) != NULL)
-    {
-        printf("Executing: %s\n", instruction);
-        execute_instruction(instruction, process);
-        increment_pc(process); // Advance the program counter
-    }
-    printf("--- Process %d Execution Complete ---\n", process->pid);
-    free_process(process);
-}
-
-=======
->>>>>>> zoair
 int main()
 {
     initialize_mem();
