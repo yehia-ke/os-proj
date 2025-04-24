@@ -20,13 +20,4 @@ void ManualClock_tick(ManualClock* clock);
 // Gets the current cycle count
 int ManualClock_getCycle(const ManualClock* clock);
 
-// Sets pause state (0 = true/paused, 1 = false/running)
-void ManualClock_setPaused(ManualClock* clock, int paused);
-
-// Requests a single step execution (sets single_step to 0/true)
-void ManualClock_requestStep(ManualClock* clock);
-
-// Checks if clock is paused (returns 0 = true/paused, 1 = false/running)
-int ManualClock_isPaused(const ManualClock* clock);
-
 #endif // MANUALCLOCK_H
