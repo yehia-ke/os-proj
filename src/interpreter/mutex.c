@@ -13,7 +13,7 @@ int is_owner(Mutex* mutex, PCB* pcb) {
     // Check if the mutex has no owner
     if (strlen(mutex->owner) == 0) {
         // Assign the PCB as the owner
-        sprintf(tmp, "%d", pcb->pid); // Assuming PCB has a 'pid' field
+        sprintf(tmp, "%d", pcb->pid);
         strcpy(mutex->owner, tmp);
         return 1; // Successfully assigned ownership
     }
