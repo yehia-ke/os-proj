@@ -4,6 +4,7 @@
 PCB* fcfs_running_process = NULL;  // Pointer to the currently running process
 Queue* fcfs_ready_queue = NULL;    // Queue for ready processes
 Queue* fcfs_waiting_queue[3]; // Queue for waiting processes
+Queue* fcfs_process_queue = NULL; // Queue for all processes
 
 void initialize_fcfs() {
     fcfs_ready_queue = queue_create(); // Initialize the ready queue
@@ -18,6 +19,7 @@ void fcfs_add_process(PCB* process) {
         return;
     }
     queue_enqueue(fcfs_ready_queue, process);
+    queue_enqueue(fcfs_process_queue, process); // Enqueue the process in the process queue
 }
 
 void fcfs_wait(char mutex_name[]) {
@@ -72,6 +74,7 @@ void run_fcfs() {
             set_state(fcfs_running_process, "Terminated");
             free_process(fcfs_running_process);
             fcfs_running_process = NULL;
+            queue_dequeue(fcfs_process_queue);
             return;
         } else {
             printf("Process %d running: %s\n", fcfs_running_process->pid, instruction);
@@ -97,4 +100,8 @@ void run_fcfs() {
             fcfs_running_process = NULL;
         }
     }
+}
+
+Queue* fcfs_get_process_queue() {
+    return fcfs_process_queue;
 }

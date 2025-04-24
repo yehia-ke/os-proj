@@ -1,6 +1,7 @@
 #include "scheduler.h"
 #include <stdio.h>
 #include <string.h>
+#include "../queue/queue.h"
 
 char* current_scheduler = NULL;  // Pointer to the currently set scheduler
 
@@ -93,5 +94,21 @@ void scheduler_signal(char mutex_name[]) {
     }
     else if (strcmp(current_scheduler, "mlfq") == 0) {
         mlfq_signal(mutex_name);
+    }
+}
+
+Queue* get_process_queue() {
+    if (current_scheduler == NULL) {
+        printf("No scheduler set.\n");
+        return NULL;
+    }
+    if (strcmp(current_scheduler, "fcfs") == 0) {
+        return fcfs_get_process_queue();
+        
+    } else if (strcmp(current_scheduler, "rr") == 0) {
+        return rr_get_process_queue();
+    }
+    else if (strcmp(current_scheduler, "mlfq") == 0) {
+        return mlfq_get_process_queue();
     }
 }

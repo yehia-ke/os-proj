@@ -7,6 +7,7 @@
 #include "../fcfs/fcfs.h"
 #include "../mlfq/mlfq.h"
 #include "../rr/rr.h"
+#include "../queue/queue.h"
 
 void set_scheduler(char* scheduler_name);
 char* run_scheduler();

@@ -8,10 +8,12 @@
 #include "../interpreter/interpreter.h"
 #include "../interpreter/mutex.h"
 
+
 void initialize_fcfs();
 void run_fcfs();
 void fcfs_add_process(PCB* process);
 void fcfs_wait(char mutex_name[]);
 void fcfs_signal(char mutex_name[]);
+Queue* fcfs_get_process_queue();
 
 #endif

@@ -13,5 +13,6 @@ void run_rr();
 void rr_add_process(PCB* process);
 void rr_wait(char mutex_name[]);
 void rr_signal(char mutex_name[]);
+Queue* rr_get_process_queue();
 
 #endif
