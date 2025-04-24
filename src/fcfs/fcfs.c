@@ -7,7 +7,8 @@ Queue* fcfs_waiting_queue[3]; // Queue for waiting processes
 Queue* fcfs_process_queue = NULL; // Queue for all processes
 
 void initialize_fcfs() {
-    fcfs_ready_queue = queue_create(); // Initialize the ready queue
+    fcfs_ready_queue = queue_create();
+    fcfs_process_queue = queue_create(); // Initialize the ready queue
     for (int i = 0; i < 3; i++) {
         fcfs_waiting_queue[i] = queue_create(); // Initialize each waiting queue
     }
@@ -103,5 +104,6 @@ void run_fcfs() {
 }
 
 Queue* fcfs_get_process_queue() {
+    printf("Process Returned");
     return fcfs_process_queue;
 }
