@@ -3,7 +3,9 @@
     "*.sqlbook": "sql",
     "*.ndjson": "jsonl",
     "*.dbclient-js": "javascript",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "interpreter.h": "c",
+    "stdlib.h": "c"
   },
   "C_Cpp.dimInactiveRegions": false
 }
