@@ -2,6 +2,89 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
+  <object class="GtkTreeStore" id="blockStore">
+    <columns>
+      <!-- column-name blockpid -->
+      <column type="gchararray"/>
+      <!-- column-name blockinst -->
+      <column type="gchararray"/>
+      <!-- column-name blocktime -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkPopover" id="popover1">
+    <property name="width-request">-1</property>
+    <property name="height-request">-1</property>
+    <property name="can-focus">False</property>
+    <child>
+      <!-- n-columns=1 n-rows=3 -->
+      <object class="GtkGrid">
+        <property name="width-request">100</property>
+        <property name="height-request">80</property>
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkButton" id="addprocessbutton">
+            <property name="label" translatable="yes">Confirm</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_addprocessbutton_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="arrivaltimeinput">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="placeholder-text" translatable="yes">Please Input Arrival Time</property>
+            <signal name="activate" handler="on_arrivaltimeinput_activate" swapped="no"/>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <!-- n-columns=2 n-rows=1 -->
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkFileChooserButton" id="programfilepath">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="title" translatable="yes">Please Choose Program Location</property>
+                <signal name="file-set" handler="on_programfilepath_file_set" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">   Please Choose FIle   </property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkTreeStore" id="processStore">
     <columns>
       <!-- column-name Process -->
@@ -16,19 +99,246 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkTreeStore" id="readyStore">
+    <columns>
+      <!-- column-name readypid -->
+      <column type="gchararray"/>
+      <!-- column-name readyinst -->
+      <column type="gchararray"/>
+      <!-- column-name readytime -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkTreeStore" id="resourceblockStore">
+    <columns>
+      <!-- column-name pid -->
+      <column type="gchararray"/>
+      <!-- column-name priority -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkTreeStore" id="runningStore">
+    <columns>
+      <!-- column-name runningpid -->
+      <column type="gchararray"/>
+      <!-- column-name runninginst -->
+      <column type="gchararray"/>
+      <!-- column-name runningtime -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkMenu" id="schedulermenu">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkMenuItem" id="fcfs">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="label" translatable="yes">First Come First Serve</property>
+        <property name="use-underline">True</property>
+        <signal name="activate" handler="on_fcfs_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="rr">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="label" translatable="yes">Round Robin</property>
+        <property name="use-underline">True</property>
+        <signal name="activate" handler="on_rr_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="mlfq">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="label" translatable="yes">Multilevel Feedback Queue</property>
+        <property name="use-underline">True</property>
+        <signal name="activate" handler="on_mlfq_activate" swapped="no"/>
+      </object>
+    </child>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="width-request">1080</property>
     <property name="height-request">1080</property>
     <property name="can-focus">False</property>
+    <property name="title" translatable="yes">Fire Scheduler</property>
     <property name="resizable">False</property>
     <child>
       <object class="GtkFixed" id="fixed1">
+        <property name="width-request">1080</property>
+        <property name="height-request">1080</property>
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
+          <!-- n-columns=3 n-rows=1 -->
+          <object class="GtkGrid" id="overview">
+            <property name="width-request">1080</property>
+            <property name="height-request">72</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="row-homogeneous">True</property>
+            <property name="column-homogeneous">True</property>
+            <child>
+              <object class="GtkLabel" id="processnumlabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Number of Processes: 0
+</property>
+                <attributes>
+                  <attribute name="scale" value="1.25"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="clocklabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Current Clock Cycle: 0
+</property>
+                <attributes>
+                  <attribute name="scale" value="1.25"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="schedulerlabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Active Scheduling Algorithm: 0
+</property>
+                <attributes>
+                  <attribute name="scale" value="1.25"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="y">-10</property>
+          </packing>
+        </child>
+        <child>
+          <!-- n-columns=5 n-rows=1 -->
+          <object class="GtkGrid" id="simulationbuttons">
+            <property name="width-request">1080</property>
+            <property name="height-request">43</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="row-homogeneous">True</property>
+            <property name="column-homogeneous">True</property>
+            <child>
+              <object class="GtkButton" id="start">
+                <property name="label" translatable="yes">Start Simulation</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <signal name="clicked" handler="on_start_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="stop">
+                <property name="label" translatable="yes">Stop Simulation</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <signal name="clicked" handler="on_stop_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="reset">
+                <property name="label" translatable="yes">Reset Simulation</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <signal name="clicked" handler="on_reset_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="schedulerselect">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="receives-default">True</property>
+                <property name="popup">schedulermenu</property>
+                <property name="use-popover">False</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Scheduler Select ▼</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">3</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkMenuButton">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="receives-default">True</property>
+                <property name="popover">popover1</property>
+                <child>
+                  <object class="GtkLabel" id="addprocesslabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Add Process▼</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">4</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="y">30</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkScrolledWindow" id="processWindow">
-            <property name="width-request">630</property>
-            <property name="height-request">470</property>
+            <property name="width-request">540</property>
+            <property name="height-request">540</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="shadow-type">in</property>
@@ -37,6 +347,8 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="model">processStore</property>
+                <property name="enable-grid-lines">both</property>
+                <property name="enable-tree-lines">True</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>
@@ -44,38 +356,554 @@
                   <object class="GtkTreeViewColumn" id="pid">
                     <property name="sizing">autosize</property>
                     <property name="title" translatable="yes">Process ID</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="processid"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
                   </object>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="pstate">
                     <property name="sizing">autosize</property>
                     <property name="title" translatable="yes">Process State</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="pstate2"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
                   </object>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="priority">
                     <property name="sizing">autosize</property>
                     <property name="title" translatable="yes">Current Priority</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="priority2"/>
+                      <attributes>
+                        <attribute name="text">2</attribute>
+                      </attributes>
+                    </child>
                   </object>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="mem">
                     <property name="sizing">autosize</property>
+                    <property name="fixed-width">160</property>
                     <property name="title" translatable="yes">Memory Boundaries</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="pmem"/>
+                      <attributes>
+                        <attribute name="text">3</attribute>
+                      </attributes>
+                    </child>
                   </object>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="pc">
                     <property name="sizing">autosize</property>
                     <property name="title" translatable="yes">Program Counter</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="pc2"/>
+                      <attributes>
+                        <attribute name="text">4</attribute>
+                      </attributes>
+                    </child>
                   </object>
                 </child>
               </object>
             </child>
           </object>
           <packing>
-            <property name="x">106</property>
-            <property name="y">204</property>
+            <property name="y">110</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="processLabel">
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Process Queue</property>
+            <attributes>
+              <attribute name="weight" value="ultraheavy"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="x">219</property>
+            <property name="y">60</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStack" id="queuestack">
+            <property name="width-request">540</property>
+            <property name="height-request">540</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="transition-duration">500</property>
+            <property name="transition-type">crossfade</property>
+            <child>
+              <object class="GtkScrolledWindow" id="readyWindow">
+                <property name="width-request">540</property>
+                <property name="height-request">540</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkTreeView" id="readyTree1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="model">readyStore</property>
+                    <property name="headers-clickable">False</property>
+                    <property name="enable-search">False</property>
+                    <property name="search-column">0</property>
+                    <property name="show-expanders">False</property>
+                    <property name="enable-grid-lines">both</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="readypid1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Process ID</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="readypid3"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="readyinst1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Current Instruction</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="readyinst3"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="readytime1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Time in Queue</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="readytime3"/>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="name">Ready Tab</property>
+                <property name="title" translatable="yes">Ready Queue</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="blockWindow">
+                <property name="width-request">100</property>
+                <property name="height-request">80</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkTreeView" id="blockTree1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="model">blockStore</property>
+                    <property name="headers-clickable">False</property>
+                    <property name="enable-search">False</property>
+                    <property name="search-column">0</property>
+                    <property name="show-expanders">False</property>
+                    <property name="enable-grid-lines">both</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="blockpid1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Process ID</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="blockpid3"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="blockinst1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Current Instruction</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="blockinst3"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="blocktime1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Time in Queue</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="blocktime3"/>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="name">Block Tab</property>
+                <property name="title" translatable="yes">Blocking Queue</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="runWindow">
+                <property name="width-request">100</property>
+                <property name="height-request">80</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkTreeView" id="runTree1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="model">readyStore</property>
+                    <property name="headers-clickable">False</property>
+                    <property name="enable-search">False</property>
+                    <property name="search-column">0</property>
+                    <property name="show-expanders">False</property>
+                    <property name="enable-grid-lines">both</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="runpid1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Process ID</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="runpid3"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="runinst1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Current Instruction</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="runinst3"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="runtime1">
+                        <property name="sizing">autosize</property>
+                        <property name="fixed-width">180</property>
+                        <property name="title" translatable="yes">Time in Queue</property>
+                        <property name="alignment">0.41999998688697815</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="runtime3"/>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="name">Run Tree</property>
+                <property name="title" translatable="yes">Running Queue</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="x">540</property>
+            <property name="y">110</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStackSwitcher" id="queueswitcher">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="stack">queuestack</property>
+          </object>
+          <packing>
+            <property name="x">625</property>
+            <property name="y">75</property>
+          </packing>
+        </child>
+        <child>
+          <!-- n-columns=2 n-rows=1 -->
+          <object class="GtkGrid" id="switching grid">
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkButton" id="autoswitcher">
+                <property name="label" translatable="yes">Auto Exec</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <signal name="clicked" handler="on_autoswitcher_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="manualstep">
+                <property name="label" translatable="yes">Next step</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <signal name="clicked" handler="on_manualstep_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="y">75</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStack" id="panels">
+            <property name="width-request">1080</property>
+            <property name="height-request">396</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="transition-type">crossfade</property>
+            <child>
+              <!-- n-columns=2 n-rows=1 -->
+              <object class="GtkGrid" id="resource">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="row-homogeneous">True</property>
+                <property name="column-homogeneous">True</property>
+                <child>
+                  <!-- n-columns=1 n-rows=3 -->
+                  <object class="GtkGrid" id="mutexstatuses">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="row-homogeneous">True</property>
+                    <property name="column-homogeneous">True</property>
+                    <child>
+                      <object class="GtkLabel" id="userInputMutex">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">userInput: Process NULL</property>
+                        <attributes>
+                          <attribute name="scale" value="1.5"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="userOutputMutex">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">userOutput: Process NULL</property>
+                        <attributes>
+                          <attribute name="scale" value="1.5"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="fileMutex">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">file: Process NULL</property>
+                        <attributes>
+                          <attribute name="scale" value="1.5"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="resourceWindow">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="shadow-type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="blockresourceTree">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="model">resourceblockStore</property>
+                        <property name="headers-clickable">False</property>
+                        <property name="enable-search">False</property>
+                        <property name="search-column">0</property>
+                        <property name="show-expanders">False</property>
+                        <property name="enable-grid-lines">both</property>
+                        <property name="enable-tree-lines">True</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="resourcepid">
+                            <property name="fixed-width">270</property>
+                            <property name="title" translatable="yes">Process ID</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="resourcepid2"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="resourcepriority">
+                            <property name="fixed-width">270</property>
+                            <property name="title" translatable="yes">Priority</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="resourcepriority2"/>
+                              <attributes>
+                                <attribute name="text">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="name">Resource Managment</property>
+                <property name="title" translatable="yes">Resource Management</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="memoryWindow">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="name">memory</property>
+                <property name="title" translatable="yes">Memory Viewer</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <!-- n-columns=2 n-rows=1 -->
+              <object class="GtkGrid" id="log">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="row-homogeneous">True</property>
+                <property name="column-homogeneous">True</property>
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="shadow-type">in</property>
+                    <child>
+                      <object class="GtkTextView" id="log_text_view">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="editable">False</property>
+                        <property name="cursor-visible">False</property>
+                        <property name="accepts-tab">False</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="name">log</property>
+                <property name="title" translatable="yes">Log &amp; Console Panel</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="y">684</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStackSwitcher" id="panelswitcher">
+            <property name="width-request">100</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="stack">panels</property>
+          </object>
+          <packing>
+            <property name="x">280</property>
+            <property name="y">650</property>
           </packing>
         </child>
       </object>
