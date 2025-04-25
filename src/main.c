@@ -9,6 +9,7 @@
 #include "AutomaticClock/AutomaticClock.h"
 #include "ManualClock/ManualClock.h"
 #include <unistd.h>
+#include <glib.h>
 
 // Global variables
 GtkTreeStore *blockStore;

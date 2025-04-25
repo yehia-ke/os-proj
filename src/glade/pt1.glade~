@@ -805,6 +805,9 @@
                             <property name="title" translatable="yes">Process ID</property>
                             <child>
                               <object class="GtkCellRendererText" id="resourcepid2"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
                             </child>
                           </object>
                         </child>
@@ -814,6 +817,9 @@
                             <property name="title" translatable="yes">Priority</property>
                             <child>
                               <object class="GtkCellRendererText" id="resourcepriority2"/>
+                              <attributes>
+                                <attribute name="text">1</attribute>
+                              </attributes>
                             </child>
                           </object>
                         </child>
