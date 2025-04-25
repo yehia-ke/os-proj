@@ -10,12 +10,13 @@
 #include "ManualClock/ManualClock.h"
 #include <unistd.h>
 
-// Global variables for GtkTreeStores
+// Global variables
 GtkTreeStore *blockStore;
 GtkTreeStore *processStore;
 GtkTreeStore *readyStore;
 GtkTreeStore *resourceblockStore;
 GtkTreeStore *runningStore;
+GtkWidget *main_window; // Global main window variable
 
 // Callback function for handling console output
 static gboolean console_output_callback(GIOChannel *source, GIOCondition condition, gpointer data) {
@@ -57,6 +58,20 @@ static void redirect_console_to_text_view(GtkWidget *log_text_view) {
     dup2(pipe_fd[1], STDERR_FILENO);
 }
 
+void show_error_message(const char *message) {
+    GtkWidget *dialog = gtk_message_dialog_new(
+        GTK_WINDOW(main_window), // Use the global main window
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_CLOSE,
+        "%s",
+        message
+    );
+
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
 // Dummy data filling functions
 static void update_blockStore() {
     gtk_tree_store_clear(blockStore);
@@ -69,7 +84,6 @@ static void update_blockStore() {
 }
 
 static void update_processStore() {
-    //gtk_tree_store_clear(processStore);
     GtkTreeIter iter;
     gtk_tree_store_append(processStore, &iter, NULL);
     gtk_tree_store_set(processStore, &iter, 0, "Process 1", 1, "State 1", 2, "Priority 1", 3, "Memory 1", 4, "Program 1", -1);
@@ -111,6 +125,7 @@ static void update_runningStore() {
 // Signal handlers
 void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data) {
     g_print("Add Process Confirm button clicked.\n");
+    show_error_message("Process NOT added successfully.");
 }
 
 void on_arrivaltimeinput_activate(GtkWidget *widget, gpointer data) {
@@ -156,13 +171,13 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data) {
 
 int main(int argc, char *argv[]) {
     GtkBuilder *builder;
-    GtkWidget *window, *log_text_view;
+    GtkWidget *log_text_view;
 
     gtk_init(&argc, &argv);
 
     builder = gtk_builder_new_from_file("./glade/pt1.glade");
 
-    window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+    main_window = GTK_WIDGET(gtk_builder_get_object(builder, "window")); // Set global main window
     log_text_view = GTK_WIDGET(gtk_builder_get_object(builder, "log_text_view"));
 
     redirect_console_to_text_view(log_text_view);
@@ -183,9 +198,9 @@ int main(int argc, char *argv[]) {
 
     gtk_builder_connect_signals(builder, NULL);
 
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    gtk_widget_show_all(window);
+    gtk_widget_show_all(main_window);
 
     gtk_main();
 
