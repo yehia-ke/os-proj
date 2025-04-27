@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-PCB* create_process(int pid, char* program_file, int arrival_time) {
+PCB* create_process(int pid, char* program_file) {
     char file_path[256];
     sprintf(file_path, "../programs/%s", program_file);
     FILE* fp = fopen(file_path, "r");

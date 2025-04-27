@@ -4,8 +4,7 @@
 // Manual Clock structure
 typedef struct {
     int current_cycle;   // Current clock cycle count
-    int is_paused;      // Pause state (0 = true/paused, 1 = false/running)
-    int single_step;    // Single-step mode flag (0 = true, 1 = false)
+    int is_paused;      // Pause state (0 = true/paused, 1 = false/running)   // Single-step mode flag (0 = true, 1 = false)
 } ManualClock;
 
 // Creates a new ManualClock instance

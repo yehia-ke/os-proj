@@ -13,7 +13,7 @@ typedef struct {
     int mem_upper;
 } PCB;
 
-PCB* create_process(int pid, char* program_file, int arrival_time);
+PCB* create_process(int pid, char* program_file);
 void set_state(PCB* pcb, char* new_state);
 void set_priority(PCB* pcb, int new_priority);
 char* get_instruction(PCB* pcb);

@@ -1,17 +1,20 @@
 #include "ManualClock.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <gtk/gtk.h>
 
 #define TRUE 1
 #define FALSE 0
 
-ManualClock* ManualClock_create(void) {
+ManualClock* ManualClock_create() {
+    printf("Creating ManualClock instance...\n");
     ManualClock* clock = (ManualClock*)malloc(sizeof(ManualClock));
     if (clock) {
+        printf("ManualClock instance created successfully.\n");
         clock->current_cycle = 0;
         clock->is_paused = TRUE;     
-        clock->single_step = FALSE;
     }
+    printf("ManualClock instance created.\n");
     return clock;
 }
 
@@ -22,8 +25,8 @@ void ManualClock_destroy(ManualClock* clock) {
 void ManualClock_tick(ManualClock* clock) {
     if (!clock) return;
 
-    printf("Press ENTER to proceed to the next cycle...");
-    while (getchar() != '\n');
+    // printf("Press ENTER to proceed to the next cycle...");
+    // while (getchar() != '\n');
 
     clock->current_cycle++;
 }

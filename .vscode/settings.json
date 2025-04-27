@@ -6,7 +6,10 @@
     "stdio.h": "c",
     "interpreter.h": "c",
     "stdlib.h": "c",
-    "string.h": "c"
+    "string.h": "c",
+    "process.h": "c",
+    "format": "c",
+    "chrono": "c"
   },
   "C_Cpp.dimInactiveRegions": false,
   "C_Cpp.errorSquiggles": "enabled"

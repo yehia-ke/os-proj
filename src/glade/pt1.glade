@@ -186,7 +186,7 @@
           <!-- n-columns=3 n-rows=1 -->
           <object class="GtkGrid" id="overview">
             <property name="width-request">1080</property>
-            <property name="height-request">72</property>
+            <property name="height-request">30</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="row-homogeneous">True</property>
@@ -195,8 +195,7 @@
               <object class="GtkLabel" id="processnumlabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Number of Processes: 0
-</property>
+                <property name="label" translatable="yes">Number of Processes: 0</property>
                 <attributes>
                   <attribute name="scale" value="1.25"/>
                 </attributes>
@@ -210,8 +209,7 @@
               <object class="GtkLabel" id="clocklabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Current Clock Cycle: 0
-</property>
+                <property name="label" translatable="yes">Current Clock Cycle: 0</property>
                 <attributes>
                   <attribute name="scale" value="1.25"/>
                 </attributes>
@@ -225,8 +223,7 @@
               <object class="GtkLabel" id="schedulerlabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Active Scheduling Algorithm: 0
-</property>
+                <property name="label" translatable="yes">Active Scheduling Algorithm: 0</property>
                 <attributes>
                   <attribute name="scale" value="1.25"/>
                 </attributes>
@@ -237,9 +234,6 @@
               </packing>
             </child>
           </object>
-          <packing>
-            <property name="y">-10</property>
-          </packing>
         </child>
         <child>
           <!-- n-columns=5 n-rows=1 -->

@@ -1,7 +1,8 @@
 #include "AutomaticClock.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>  // For usleep
+#include <unistd.h> 
+#include "../main.h" // For usleep
 
 #define TRUE 1
 #define FALSE 0
@@ -32,10 +33,15 @@ void AutomaticClock_start(AutomaticClock* clock) {
 // Update the clock by incrementing the cycle based on the time interval
 void AutomaticClock_update(AutomaticClock* clock) {
     if (!clock || !clock->is_running) return;
-
-    // Wait for the specified interval (in seconds)
-    usleep(clock->interval * 1000000);  // Convert to microseconds
     clock->current_cycle++;
+    // Wait for the specified interval (in seconds)
+    //usleep(clock->interval * 1000000);  // Convert to microseconds
+    int clocktemp = AutomaticClock_getCycle(automaticClock);
+    char clockcyclemichael[20];
+    sprintf(clockcyclemichael, "%d", clocktemp);
+    char message[100];
+    snprintf(message, sizeof(message), "Current Clock Cycle: %s", clockcyclemichael);
+    set_clocklabel(message);
 }
 
 // Get the current cycle
