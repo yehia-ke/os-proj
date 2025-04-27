@@ -86,23 +86,6 @@ void show_error_message(const char *message) {
     gtk_widget_destroy(dialog);
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    // Step 4: Load Programs
-    PCB *programs[3];
-=======
-// Main function
-int main(int argc, char *argv[])
-{
-    // Initialize GTK
-    gtk_init(&argc, &argv);
-
-    // Create the main window
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "OS Simulation GUI");
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
->>>>>>> gui
-=======
 // Dummy data filling functions
 static void update_blockStore() {
     gtk_tree_store_clear(blockStore);
@@ -209,43 +192,12 @@ int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
 
     builder = gtk_builder_new_from_file("./glade/pt1.glade");
->>>>>>> gui
 
     main_window = GTK_WIDGET(gtk_builder_get_object(builder, "window")); // Set global main window
     log_text_view = GTK_WIDGET(gtk_builder_get_object(builder, "log_text_view"));
 
     redirect_console_to_text_view(log_text_view);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-        if (current_cycle == 1)
-        {
-            programs[0] = load_program("Program_1.txt", 1, 0);   // Arrives at cycle 0
-            add_process_to_scheduler(programs[0]);
-        }
-        else if (current_cycle == 5)
-        {
-            programs[1] = load_program("Program_2.txt", 2, 5);   // Arrives at cycle 5
-            add_process_to_scheduler(programs[1]);
-        }
-        else if (current_cycle == 10)
-        {
-            programs[2] = load_program("Program_3.txt", 3, 10);  // Arrives at cycle 10
-            add_process_to_scheduler(programs[2]);
-        }
-        // Run the scheduler for one cycle
-        run_scheduler(); 
-    }
-=======
-    // Memory Viewer
-    GtkWidget *memory_label = gtk_label_new("Memory Viewer:");
-    gtk_grid_attach(GTK_GRID(grid), memory_label, 0, 0, 1, 1);
-
-    memory_viewer = gtk_text_view_new();
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(memory_viewer), FALSE);
-    gtk_grid_attach(GTK_GRID(grid), memory_viewer, 0, 1, 4, 1);
->>>>>>> gui
-=======
     // Initialize global TreeStores
     blockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "blockStore"));
     processStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "processStore"));
@@ -259,7 +211,6 @@ int main(int argc, char *argv[]) {
     update_readyStore();
     update_resourceblockStore();
     update_runningStore();
->>>>>>> gui
 
     gtk_builder_connect_signals(builder, NULL);
 
