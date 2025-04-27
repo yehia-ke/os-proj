@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
 
     gtk_init(&argc, &argv);
 
-    builder = gtk_builder_new_from_file("./glade/pt1.glade");
+    builder = gtk_builder_new_from_file("src/glade/pt1.glade");
 
     main_window = GTK_WIDGET(gtk_builder_get_object(builder, "window")); // Set global main window
     log_text_view = GTK_WIDGET(gtk_builder_get_object(builder, "log_text_view"));
