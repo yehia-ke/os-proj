@@ -14,5 +14,6 @@ char* run_scheduler();
 void add_process_to_scheduler(PCB* process);
 void scheduler_wait(char mutex_name[]);
 void scheduler_signal(char mutex_name[]);
+Queue* get_process_queue();
 
 #endif

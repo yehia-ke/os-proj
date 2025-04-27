@@ -2,107 +2,91 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
+#include <time.h>
+#include "./queue/queue.h"
 #include "pcb/pcb.h"
 #include "interpreter/interpreter.h"
 #include "scheduler/scheduler.h"
 #include "AutomaticClock/AutomaticClock.h"
 #include "ManualClock/ManualClock.h"
+#include <unistd.h>
+#include <glib.h>
 
-// Global variables for GUI components
-GtkWidget *process_list;
-GtkWidget *memory_viewer;
-GtkWidget *log_console;
-GtkWidget *scheduler_dropdown;
-GtkWidget *clock_type_radio;
-GtkWidget *start_button;
+// Global variables
+GtkTreeStore *blockStore;
+GtkTreeStore *processStore;
+GtkTreeStore *readyStore;
+GtkTreeStore *resourceblockStore;
+GtkTreeStore *runningStore;
+GtkWidget *main_window; // Global main window variable
 
-// Function to load a program from a file into a PCB
-PCB *load_program(const char *filename, int pid, int arrival_time)
-{
-    PCB *process = create_process(pid, (char *)filename, arrival_time);
-    if (!process)
-    {
-        printf("Failed to load program: %s\n", filename);
-        exit(1);
+// Function to get the current timestamp as a string
+static char *get_current_timestamp() {
+    static char timestamp[64];
+    time_t now = time(NULL);
+    struct tm *timeinfo = localtime(&now);
+    strftime(timestamp, sizeof(timestamp), "[%Y-%m-%d %H:%M:%S] ", timeinfo);
+    return timestamp;
+}
+
+// Callback function for handling console output
+static gboolean console_output_callback(GIOChannel *source, GIOCondition condition, gpointer data) {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(data));
+    char buf[256];
+    gsize bytes_read;
+    GError *error = NULL;
+
+    g_io_channel_read_chars(source, buf, sizeof(buf) - 1, &bytes_read, &error);
+    if (error) {
+        g_error_free(error);
+        return FALSE;
     }
-    return process;
-}
 
-// Function to update the process list in the GUI
-void update_process_list()
-{
-    // Example data for a queue format
-    const char *process_queue =
-        "Process Queue:\n"
-        "--------------------\n"
-        "PID   | State   | Priority | Memory Bounds | Program Counter\n"
-        "1     | Running | High     | 0-15          | 10\n"
-        "2     | Ready   | Medium   | 16-30         | 5\n"
-        "3     | Blocked | Low      | 31-45         | 0\n";
-
-    gtk_text_buffer_set_text(GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(process_list))),
-                             process_queue, -1);
-}
-
-// Function to update the memory viewer in the GUI
-void update_memory_viewer()
-{
-    gtk_text_buffer_set_text(GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(memory_viewer))),
-                             "Memory Viewer Updated: (Example Data)\n[0] Process 1\n[1] Process 2\n[2] Empty", -1);
-}
-
-// Function to log events in the GUI console
-void log_event(const char *message)
-{
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(log_console));
+    buf[bytes_read] = '\0';
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, message, -1);
-    gtk_text_buffer_insert(buffer, &end, "\n", -1);
+
+    // Prepend timestamp to the log message
+    gtk_text_buffer_insert(buffer, &end, get_current_timestamp(), -1);
+    gtk_text_buffer_insert(buffer, &end, buf, -1);
+
+    return TRUE;
 }
 
-// Callback for the Start button
-void start_simulation(GtkWidget *widget, gpointer data)
-{
-    log_event("Simulation Started");
-    update_process_list(); // Update process list when the simulation starts
-    // TODO: Start the simulation loop and update the GUI periodically
-}
+// Redirect console output to GtkTextView
+static void redirect_console_to_text_view(GtkWidget *log_text_view) {
+    static int pipe_fd[2];
+    static GIOChannel *io_channel;
 
-// Callback for Scheduler dropdown
-void scheduler_changed(GtkComboBox *widget, gpointer data)
-{
-    const char *scheduler = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(widget));
-    if (scheduler != NULL)
-    {
-        log_event("Scheduler changed to:");
-        log_event(scheduler);
-
-        // Fix: Remove the const qualifier by creating a mutable copy
-        char mutable_scheduler[10];
-        strncpy(mutable_scheduler, scheduler, sizeof(mutable_scheduler) - 1);
-        mutable_scheduler[sizeof(mutable_scheduler) - 1] = '\0';
-
-        set_scheduler(mutable_scheduler); // Set the selected scheduler
+    if (pipe(pipe_fd) == -1) {
+        perror("Pipe creation failed");
+        exit(EXIT_FAILURE);
     }
+
+    io_channel = g_io_channel_unix_new(pipe_fd[0]);
+    g_io_channel_set_flags(io_channel, G_IO_FLAG_NONBLOCK, NULL);
+
+    g_io_add_watch(io_channel, G_IO_IN | G_IO_PRI, console_output_callback, log_text_view);
+
+    dup2(pipe_fd[1], STDOUT_FILENO);
+    dup2(pipe_fd[1], STDERR_FILENO);
 }
 
-// Callback for Clock type radio button
-void clock_type_changed(GtkToggleButton *widget, gpointer data)
-{
-    gboolean active = gtk_toggle_button_get_active(widget);
-    if (active)
-    {
-        log_event("Clock type set to Automatic");
-        // TODO: Set clock type to automatic
-    }
-    else
-    {
-        log_event("Clock type set to Manual");
-        // TODO: Set clock type to manual
-    }
+void show_error_message(const char *message) {
+    GtkWidget *dialog = gtk_message_dialog_new(
+        GTK_WINDOW(main_window), // Use the global main window
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_CLOSE,
+        "%s",
+        message
+    );
+
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     // Step 4: Load Programs
     PCB *programs[3];
@@ -118,13 +102,121 @@ int main(int argc, char *argv[])
     gtk_window_set_title(GTK_WINDOW(window), "OS Simulation GUI");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
 >>>>>>> gui
+=======
+// Dummy data filling functions
+static void update_blockStore() {
+    gtk_tree_store_clear(blockStore);
+    GtkTreeIter iter;
+    gtk_tree_store_append(blockStore, &iter, NULL);
+    gtk_tree_store_set(blockStore, &iter, 0, "Block PID 1", 1, "Block Inst 1", 2, "Block Time 1", -1);
 
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_tree_store_append(blockStore, &iter, NULL);
+    gtk_tree_store_set(blockStore, &iter, 0, "Block PID 2", 1, "Block Inst 2", 2, "Block Time 2", -1);
+}
 
-    // Create a grid to layout GUI components
-    GtkWidget *grid = gtk_grid_new();
-    gtk_container_add(GTK_CONTAINER(window), grid);
+static void update_processStore() {
+    GtkTreeIter iter;
+    gtk_tree_store_append(processStore, &iter, NULL);
+    gtk_tree_store_set(processStore, &iter, 0, "Process 1", 1, "State 1", 2, "Priority 1", 3, "Memory 1", 4, "Program 1", -1);
 
+    gtk_tree_store_append(processStore, &iter, NULL);
+    gtk_tree_store_set(processStore, &iter, 0, "Process 2", 1, "State 2", 2, "Priority 2", 3, "Memory 2", 4, "Program 2", -1);
+}
+
+static void update_readyStore() {
+    gtk_tree_store_clear(readyStore);
+    GtkTreeIter iter;
+    gtk_tree_store_append(readyStore, &iter, NULL);
+    gtk_tree_store_set(readyStore, &iter, 0, "Ready PID 1", 1, "Ready Inst 1", 2, "Ready Time 1", -1);
+
+    gtk_tree_store_append(readyStore, &iter, NULL);
+    gtk_tree_store_set(readyStore, &iter, 0, "Ready PID 2", 1, "Ready Inst 2", 2, "Ready Time 2", -1);
+}
+
+static void update_resourceblockStore() {
+    gtk_tree_store_clear(resourceblockStore);
+    GtkTreeIter iter;
+    gtk_tree_store_append(resourceblockStore, &iter, NULL);
+    gtk_tree_store_set(resourceblockStore, &iter, 0, "Resource PID 1", 1, "Priority 1", -1);
+
+    gtk_tree_store_append(resourceblockStore, &iter, NULL);
+    gtk_tree_store_set(resourceblockStore, &iter, 0, "Resource PID 2", 1, "Priority 2", -1);
+}
+
+static void update_runningStore() {
+    gtk_tree_store_clear(runningStore);
+    GtkTreeIter iter;
+    gtk_tree_store_append(runningStore, &iter, NULL);
+    gtk_tree_store_set(runningStore, &iter, 0, "Running PID 1", 1, "Running Inst 1", 2, "Running Time 1", -1);
+
+    gtk_tree_store_append(runningStore, &iter, NULL);
+    gtk_tree_store_set(runningStore, &iter, 0, "Running PID 2", 1, "Running Inst 2", 2, "Running Time 2", -1);
+}
+
+// Signal handlers
+void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data) {
+    g_print("Add Process Confirm button clicked.\n");
+    show_error_message("Process NOT added successfully.");
+}
+
+void on_arrivaltimeinput_activate(GtkWidget *widget, gpointer data) {
+    g_print("Arrival time input activated: %s\n", gtk_entry_get_text(GTK_ENTRY(widget)));
+}
+
+void on_programfilepath_file_set(GtkWidget *widget, gpointer data) {
+    g_print("File selected: %s\n", gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget)));
+}
+
+void on_fcfs_activate(GtkWidget *widget, gpointer data) {
+    g_print("First Come First Serve selected.\n");
+}
+
+void on_rr_activate(GtkWidget *widget, gpointer data) {
+    g_print("Round Robin selected.\n");
+}
+
+void on_mlfq_activate(GtkWidget *widget, gpointer data) {
+    g_print("Multilevel Feedback Queue selected.\n");
+}
+
+void on_start_clicked(GtkWidget *widget, gpointer data) {
+    g_print("Start Simulation clicked.\n");
+    update_processStore();
+}
+
+void on_stop_clicked(GtkWidget *widget, gpointer data) {
+    g_print("Stop Simulation clicked.\n");
+}
+
+void on_reset_clicked(GtkWidget *widget, gpointer data) {
+    g_print("Reset Simulation clicked.\n");
+}
+
+void on_autoswitcher_clicked(GtkWidget *widget, gpointer data) {
+    g_print("Auto Exec clicked.\n");
+    // Add logic for auto execution if needed
+}
+
+void on_manualstep_clicked(GtkWidget *widget, gpointer data) {
+    g_print("Manual step clicked.\n");
+    // Add logic for manual stepping if needed
+}
+
+int main(int argc, char *argv[]) {
+    GtkBuilder *builder;
+    GtkWidget *log_text_view;
+
+    gtk_init(&argc, &argv);
+
+    builder = gtk_builder_new_from_file("./glade/pt1.glade");
+>>>>>>> gui
+
+    main_window = GTK_WIDGET(gtk_builder_get_object(builder, "window")); // Set global main window
+    log_text_view = GTK_WIDGET(gtk_builder_get_object(builder, "log_text_view"));
+
+    redirect_console_to_text_view(log_text_view);
+
+<<<<<<< HEAD
 <<<<<<< HEAD
         if (current_cycle == 1)
         {
@@ -153,54 +245,28 @@ int main(int argc, char *argv[])
     gtk_text_view_set_editable(GTK_TEXT_VIEW(memory_viewer), FALSE);
     gtk_grid_attach(GTK_GRID(grid), memory_viewer, 0, 1, 4, 1);
 >>>>>>> gui
+=======
+    // Initialize global TreeStores
+    blockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "blockStore"));
+    processStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "processStore"));
+    readyStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "readyStore"));
+    resourceblockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "resourceblockStore"));
+    runningStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "runningStore"));
 
-    // Log Console
-    GtkWidget *log_label = gtk_label_new("Log Console:");
-    gtk_grid_attach(GTK_GRID(grid), log_label, 0, 2, 1, 1);
+    // Fill TreeStores with dummy data
+    update_blockStore();
+    update_processStore();
+    update_readyStore();
+    update_resourceblockStore();
+    update_runningStore();
+>>>>>>> gui
 
-    log_console = gtk_text_view_new();
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(log_console), FALSE);
-    gtk_grid_attach(GTK_GRID(grid), log_console, 0, 3, 4, 1);
+    gtk_builder_connect_signals(builder, NULL);
 
-    // Scheduler Dropdown
-    GtkWidget *scheduler_label = gtk_label_new("Scheduler:");
-    gtk_grid_attach(GTK_GRID(grid), scheduler_label, 0, 4, 1, 1);
+    g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    scheduler_dropdown = gtk_combo_box_text_new();
-    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(scheduler_dropdown), NULL, "fcfs");
-    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(scheduler_dropdown), NULL, "mlfq");
-    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(scheduler_dropdown), NULL, "rr");
-    gtk_grid_attach(GTK_GRID(grid), scheduler_dropdown, 1, 4, 1, 1);
-    g_signal_connect(scheduler_dropdown, "changed", G_CALLBACK(scheduler_changed), NULL);
+    gtk_widget_show_all(main_window);
 
-    // Clock Type Radio Buttons
-    GtkWidget *clock_type_label = gtk_label_new("Clock Type:");
-    gtk_grid_attach(GTK_GRID(grid), clock_type_label, 2, 4, 1, 1);
-
-    GtkWidget *manual_clock_radio = gtk_radio_button_new_with_label(NULL, "Manual");
-    gtk_grid_attach(GTK_GRID(grid), manual_clock_radio, 2, 5, 1, 1);
-    g_signal_connect(manual_clock_radio, "toggled", G_CALLBACK(clock_type_changed), NULL);
-
-    GtkWidget *auto_clock_radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(manual_clock_radio), "Automatic");
-    gtk_grid_attach(GTK_GRID(grid), auto_clock_radio, 3, 5, 1, 1);
-
-    // Start Button
-    start_button = gtk_button_new_with_label("Start Simulation");
-    gtk_grid_attach(GTK_GRID(grid), start_button, 0, 6, 4, 1);
-    g_signal_connect(start_button, "clicked", G_CALLBACK(start_simulation), NULL);
-
-    // Process List (Moved to the bottom)
-    GtkWidget *process_label = gtk_label_new("Process Queue:");
-    gtk_grid_attach(GTK_GRID(grid), process_label, 0, 7, 1, 1);
-
-    process_list = gtk_text_view_new();
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(process_list), FALSE);
-    gtk_grid_attach(GTK_GRID(grid), process_list, 0, 8, 4, 1);
-
-    // Show all widgets
-    gtk_widget_show_all(window);
-
-    // Enter the GTK main loop
     gtk_main();
 
     return 0;

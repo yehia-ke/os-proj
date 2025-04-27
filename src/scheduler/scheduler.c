@@ -54,6 +54,7 @@ void add_process_to_scheduler(PCB *process) {
 
     // Call the appropriate scheduler's add process function
     if (strcmp(current_scheduler, "fcfs") == 0) {
+        printf("fcfs");
         fcfs_add_process(process);
     } else if (strcmp(current_scheduler, "rr") == 0) {
         rr_add_process(process);
@@ -103,12 +104,18 @@ Queue* get_process_queue() {
         return NULL;
     }
     if (strcmp(current_scheduler, "fcfs") == 0) {
+        printf("fcfs");
         return fcfs_get_process_queue();
         
     } else if (strcmp(current_scheduler, "rr") == 0) {
+        printf("rr");
         return rr_get_process_queue();
     }
     else if (strcmp(current_scheduler, "mlfq") == 0) {
+        printf("mlfq");
         return mlfq_get_process_queue();
+    }
+    else{
+        printf("yes");
     }
 }
