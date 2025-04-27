@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
+#include <time.h>
 #include "./queue/queue.h"
 #include "pcb/pcb.h"
 #include "interpreter/interpreter.h"
@@ -19,6 +20,15 @@ GtkTreeStore *resourceblockStore;
 GtkTreeStore *runningStore;
 GtkWidget *main_window; // Global main window variable
 
+// Function to get the current timestamp as a string
+static char *get_current_timestamp() {
+    static char timestamp[64];
+    time_t now = time(NULL);
+    struct tm *timeinfo = localtime(&now);
+    strftime(timestamp, sizeof(timestamp), "[%Y-%m-%d %H:%M:%S] ", timeinfo);
+    return timestamp;
+}
+
 // Callback function for handling console output
 static gboolean console_output_callback(GIOChannel *source, GIOCondition condition, gpointer data) {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(data));
@@ -35,6 +45,9 @@ static gboolean console_output_callback(GIOChannel *source, GIOCondition conditi
     buf[bytes_read] = '\0';
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
+
+    // Prepend timestamp to the log message
+    gtk_text_buffer_insert(buffer, &end, get_current_timestamp(), -1);
     gtk_text_buffer_insert(buffer, &end, buf, -1);
 
     return TRUE;
@@ -164,10 +177,12 @@ void on_reset_clicked(GtkWidget *widget, gpointer data) {
 
 void on_autoswitcher_clicked(GtkWidget *widget, gpointer data) {
     g_print("Auto Exec clicked.\n");
+    // Add logic for auto execution if needed
 }
 
 void on_manualstep_clicked(GtkWidget *widget, gpointer data) {
     g_print("Manual step clicked.\n");
+    // Add logic for manual stepping if needed
 }
 
 int main(int argc, char *argv[]) {
