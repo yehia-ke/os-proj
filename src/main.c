@@ -12,15 +12,12 @@
 #include <unistd.h>
 #include <glib.h>
 
-// Global variables
 GtkTreeStore *blockStore;
 GtkTreeStore *processStore;
 GtkTreeStore *readyStore;
 GtkTreeStore *resourceblockStore;
 GtkTreeStore *runningStore;
-GtkWidget *main_window; // Global main window variable
-
-// Function to get the current timestamp as a string
+GtkWidget *main_window;
 static char *get_current_timestamp() {
     static char timestamp[64];
     time_t now = time(NULL);
@@ -29,7 +26,6 @@ static char *get_current_timestamp() {
     return timestamp;
 }
 
-// Callback function for handling console output
 static gboolean console_output_callback(GIOChannel *source, GIOCondition condition, gpointer data) {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(data));
     char buf[256];
@@ -53,7 +49,6 @@ static gboolean console_output_callback(GIOChannel *source, GIOCondition conditi
     return TRUE;
 }
 
-// Redirect console output to GtkTextView
 static void redirect_console_to_text_view(GtkWidget *log_text_view) {
     static int pipe_fd[2];
     static GIOChannel *io_channel;
@@ -86,7 +81,6 @@ void show_error_message(const char *message) {
     gtk_widget_destroy(dialog);
 }
 
-// Dummy data filling functions
 static void update_blockStore() {
     gtk_tree_store_clear(blockStore);
     GtkTreeIter iter;
@@ -136,7 +130,6 @@ static void update_runningStore() {
     gtk_tree_store_set(runningStore, &iter, 0, "Running PID 2", 1, "Running Inst 2", 2, "Running Time 2", -1);
 }
 
-// Signal handlers
 void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data) {
     g_print("Add Process Confirm button clicked.\n");
     show_error_message("Process NOT added successfully.");
@@ -193,19 +186,17 @@ int main(int argc, char *argv[]) {
 
     builder = gtk_builder_new_from_file("src/glade/pt1.glade");
 
-    main_window = GTK_WIDGET(gtk_builder_get_object(builder, "window")); // Set global main window
+    main_window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
     log_text_view = GTK_WIDGET(gtk_builder_get_object(builder, "log_text_view"));
 
     redirect_console_to_text_view(log_text_view);
 
-    // Initialize global TreeStores
     blockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "blockStore"));
     processStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "processStore"));
     readyStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "readyStore"));
     resourceblockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "resourceblockStore"));
     runningStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "runningStore"));
 
-    // Fill TreeStores with dummy data
     update_blockStore();
     update_processStore();
     update_readyStore();
