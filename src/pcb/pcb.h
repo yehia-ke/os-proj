@@ -20,5 +20,4 @@ char* get_instruction(PCB* pcb);
 void set_variable(PCB* pcb, char* var_name, char* value);
 void free_process(PCB* pcb);
 void increment_pc(PCB* pcb);
-void decrement_pc(PCB* pcb);
 #endif

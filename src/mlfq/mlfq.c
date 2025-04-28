@@ -3,7 +3,7 @@
 
 PCB* mlfq_running_process = NULL;  // Pointer to the currently running process
 Queue* mlfq_ready_queue[4];  // Array of queues for each priority level
-Queue* mlfq_waiting_queue[3]; // Array of queues for processes waiting for mutex variable i
+PQueue* mlfq_waiting_queue[3]; // Array of queues for processes waiting for mutex variable i
 int time_quantum[4] = {1, 2, 4, 8};  // Time quantum for each priority level
 
 Queue* mlfq_process_queue = NULL;
@@ -14,7 +14,7 @@ void initialize_mlfq() {
     for (int i = 0; i < 4; i++) {
         if(i < 3)
         {
-            mlfq_waiting_queue[i] = queue_create(); // Initialize each waiting queue
+            mlfq_waiting_queue[i] = pqueue_create(); // Initialize each waiting queue
         }
         mlfq_ready_queue[i] = queue_create();  // Initialize each priority queue
     }
@@ -45,8 +45,7 @@ void mlfq_wait(char mutex_name[]) {
     }
 
     set_state(mlfq_running_process, "Waiting"); // Set the state to Waiting
-    decrement_pc(mlfq_running_process); // Decrement the program counter to re-execute the instruction
-    queue_enqueue(mlfq_waiting_queue[mutex_index], mlfq_running_process); // Enqueue the process in the waiting queue
+    pqueue_enqueue(mlfq_waiting_queue[mutex_index], mlfq_running_process); // Enqueue the process in the waiting queue
     mlfq_running_process = NULL; // Clear the running process
 }
 
@@ -67,12 +66,21 @@ void mlfq_signal(char mutex_name[]) {
         return;
     }
 
-    // Dequeue all processes waiting on this mutex and enqueue them in their respective ready queues
-    while (!queue_is_empty(mlfq_waiting_queue[mutex_index])) {
-        PCB* waiting_process = (PCB*)queue_dequeue(mlfq_waiting_queue[mutex_index]); // Dequeue the first waiting process
-        queue_enqueue(mlfq_ready_queue[waiting_process->priority - 1], waiting_process); // Enqueue it in its respective priority queue
-        set_state(waiting_process, "Ready"); // Set its state to Ready
+    char tmp[50];
+
+    if(mlfq_waiting_queue[mutex_index] == NULL || pqueue_is_empty(mlfq_waiting_queue[mutex_index])) {
+        printf("No processes waiting on mutex %s\n", mutex_name);
+        strcpy(mutex_name, ""); // Clear the mutex name
+        return;
     }
+
+
+    PCB* waiting_process = (PCB*)pqueue_dequeue(mlfq_waiting_queue[mutex_index]); // Dequeue the first waiting process
+    // Enqueue it in its respective priority queue
+    queue_enqueue(mlfq_ready_queue[waiting_process->priority - 1], waiting_process);
+    sprintf(tmp, "%d", waiting_process->pid);
+    strcpy(tmp, mutex_name); // Copy the process ID to the mutex name
+    set_state(waiting_process, "Ready"); // Set its state to Ready
 }
 
 void run_mlfq() {

@@ -39,7 +39,6 @@ void fcfs_wait(char mutex_name[]) {
     }
 
     set_state(fcfs_running_process, "Waiting"); // Set the state to Waiting
-    decrement_pc(fcfs_running_process); // Decrement the program counter to re-execute the instruction
     queue_enqueue(fcfs_waiting_queue[mutex_index], fcfs_running_process); // Enqueue the process in the waiting queue
     fcfs_running_process = NULL; // Clear the running process
 }
@@ -59,12 +58,21 @@ void fcfs_signal(char mutex_name[]) {
         return;
     }
 
-    // Dequeue all processes waiting on this mutex and enqueue them in the ready queue
-    while (!queue_is_empty(fcfs_waiting_queue[mutex_index])) {
-        PCB* waiting_process = (PCB*)queue_dequeue(fcfs_waiting_queue[mutex_index]); // Dequeue the first waiting process
-        queue_enqueue(fcfs_ready_queue, waiting_process); // Enqueue it in the ready queue
-        set_state(waiting_process, "Ready"); // Set its state to Ready
+    char tmp[50];
+
+    if(fcfs_waiting_queue[mutex_index] == NULL || queue_is_empty(fcfs_waiting_queue[mutex_index])) {
+        printf("No processes waiting on mutex %s\n", mutex_name);
+        strcpy(mutex_name, ""); // Clear the mutex name
+        return;
     }
+
+
+    PCB* waiting_process = (PCB*)queue_dequeue(fcfs_waiting_queue[mutex_index]); // Dequeue the first waiting process
+    // Enqueue it in its respective priority queue
+    queue_enqueue(fcfs_ready_queue, waiting_process);
+    sprintf(tmp, "%d", waiting_process->pid);
+    strcpy(tmp, mutex_name); // Copy the process ID to the mutex name
+    set_state(waiting_process, "Ready"); // Set its state to Ready
 }
 
 void run_fcfs() {
