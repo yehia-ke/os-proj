@@ -13,6 +13,7 @@
 #include <glib.h>
 #include "./process/process.h"
 #include "./popup/popup.h"
+#include "./error/error.h"
 
 // Global variables for labels
 GtkWidget *processnumlabel;
@@ -36,20 +37,6 @@ char* clocktype = NULL;
 process* tempp = NULL;
 
 void update_gui();
-
-void show_error_message(const char *message)
-{
-    GtkWidget *dialog = gtk_message_dialog_new(
-        GTK_WINDOW(main_window), // Use the global main window
-        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-        GTK_MESSAGE_ERROR,
-        GTK_BUTTONS_CLOSE,
-        "%s",
-        message);
-
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-}
 
 void printtogui(char* message){
     g_print(message);
@@ -286,6 +273,9 @@ void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data)
     else if(tempp->path == NULL ){
         show_error_message("No path selected.");
     }
+    else if(tempp->arrival_time < AutomaticClock_getCycle(automaticClock) || tempp->arrival_time < ManualClock_getCycle(manualClock)) {
+        show_error_message("Arrival Time cannot be less than the current clock cycle.");
+    }
     else{
         g_print(tempp->path);
         g_print("%d",tempp->arrival_time);
@@ -485,11 +475,11 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data)
 
 void update_gui(){
 
-    update_blockStore();
+    //update_blockStore();
     update_processStore();
-    update_readyStore();
-    update_resourceblockStore();
-    update_runningStore();
+    //update_readyStore();
+    //update_resourceblockStore();
+    //update_runningStore();
 
 }
 
