@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <glib.h>
 #include "./process/process.h"
+#include "./popup/popup.h"
 
 // Global variables for labels
 GtkWidget *processnumlabel;
@@ -33,6 +34,8 @@ ManualClock *manualClock = NULL;
 AutomaticClock *automaticClock = NULL;
 char* clocktype = NULL;
 process* tempp = NULL;
+
+void update_gui();
 
 void show_error_message(const char *message)
 {
@@ -89,6 +92,7 @@ void* non_blocking_loop(void* arg) {
         checkArrivalTime(); // Infinite loop
         run_scheduler();
         AutomaticClock_update(automaticClock);
+        update_gui();
         //sleep(1); // Sleep for 1 second to avoid excessive CPU usage
         g_print("Automatic Clock updated.\n");
         usleep(1000 * 1000);
@@ -164,12 +168,49 @@ static void update_blockStore()
 
 static void update_processStore()
 {
-    GtkTreeIter iter;
-    gtk_tree_store_append(processStore, &iter, NULL);
-    gtk_tree_store_set(processStore, &iter, 0, "Process 1", 1, "State 1", 2, "Priority 1", 3, "Memory 1", 4, "Program 1", -1);
+    // Clear the existing data from the table
+    gtk_tree_store_clear(processStore);
 
-    gtk_tree_store_append(processStore, &iter, NULL);
-    gtk_tree_store_set(processStore, &iter, 0, "Process 2", 1, "State 2", 2, "Priority 2", 3, "Memory 2", 4, "Program 2", -1);
+    // Get the process queue
+    Queue *queue = get_process_queue();
+    if (!queue || queue_is_empty(queue))
+    {
+        // If the queue is empty, there's nothing to display
+        return;
+    }
+
+    // Create a temporary queue to hold processes while iterating
+    Queue *temp_queue = queue_create();
+
+    while (!queue_is_empty(queue))
+    {
+        // Dequeue a process from the original queue
+        PCB *process = (PCB *)queue_dequeue(queue);
+
+        // Add the process to the table
+        GtkTreeIter iter;
+        gtk_tree_store_append(processStore, &iter, NULL);
+        gtk_tree_store_set(processStore, &iter,
+                           0, process->pid,
+                           1, process->state,
+                           2, process->priority,
+                           3, process->mem_lower,
+                           4, process->mem_upper,
+                           -1);
+
+        // Enqueue the process into the temporary queue
+        queue_enqueue(temp_queue, process);
+    }
+
+    // Restore all processes back to the original queue from the temporary queue
+    while (!queue_is_empty(temp_queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(temp_queue);
+        queue_enqueue(queue, process);
+    }
+
+    // Destroy the temporary queue
+    queue_destroy(temp_queue);
 }
 
 static void update_readyStore()
@@ -412,6 +453,7 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data)
         checkArrivalTime();
         run_scheduler();
         ManualClock_tick(manualClock);
+        update_gui();
         int clocktemp = ManualClock_getCycle(manualClock);
         char clockcyclemichael[20];
         sprintf(clockcyclemichael, "%d", clocktemp);
@@ -428,8 +470,8 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data)
         manualClock->current_cycle = cc;
         clocktype = "m";
         g_print("Manual Step clicked.\n");
-        //run_scheduler();
         ManualClock_tick(manualClock);
+        update_gui();
         int clocktemp = ManualClock_getCycle(manualClock);
         char clockcyclemichael[20];
         sprintf(clockcyclemichael, "%d", clocktemp);
@@ -439,6 +481,16 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data)
         
     }
     }
+}
+
+void update_gui(){
+
+    update_blockStore();
+    update_processStore();
+    update_readyStore();
+    update_resourceblockStore();
+    update_runningStore();
+
 }
 
 int main(int argc, char *argv[])

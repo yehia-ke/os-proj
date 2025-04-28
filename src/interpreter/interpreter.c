@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "../popup/popup.h"
 
 // Global Mutexes defined in mutex.c
 extern Mutex userInput;
@@ -81,12 +82,12 @@ void execute_instruction(char *instruction, PCB *process)
         {
             // Assign user input to var1
             printf("Please enter a value for a: ");
-            char value[50];
-            int c;
-            while ((c = getchar()) != '\n' && c != EOF)
-                ;
-            fgets(value, sizeof(value), stdin);
-            value[strcspn(value, "\n")] = '\0';
+            char* value = show_text_entry_popup("Enter a value for a");
+            // int c;
+            // while ((c = getchar()) != '\n' && c != EOF)
+            //     ;
+            // fgets(value, sizeof(value), stdin);
+            // value[strcspn(value, "\n")] = '\0';
             printf("%s\n", value);
             set_variable(process, "var1", value);
         }
@@ -94,10 +95,10 @@ void execute_instruction(char *instruction, PCB *process)
         {
             // Assign user input to var2
             printf("Please enter a value for b: ");
-            char value[50];
-            int c;
-            fgets(value, sizeof(value), stdin);
-            value[strcspn(value, "\n")] = '\0';
+            char* value = show_text_entry_popup("Enter a value for b");
+            // int c;
+            // fgets(value, sizeof(value), stdin);
+            // value[strcspn(value, "\n")] = '\0';
             printf("%s\n", value);
             set_variable(process, "var2", value);
         }
