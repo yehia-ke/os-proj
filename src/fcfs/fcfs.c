@@ -71,7 +71,7 @@ void fcfs_signal(char mutex_name[]) {
     // Enqueue it in its respective priority queue
     queue_enqueue(fcfs_ready_queue, waiting_process);
     sprintf(tmp, "%d", waiting_process->pid);
-    strcpy(tmp, mutex_name); // Copy the process ID to the mutex name
+    strcpy(mutex_name, tmp); // Copy the process ID to the mutex name
     set_state(waiting_process, "Ready"); // Set its state to Ready
 }
 
