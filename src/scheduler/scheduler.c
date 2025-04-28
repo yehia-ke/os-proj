@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "../queue/queue.h"
+#include "../main.h"
 
 char* current_scheduler = NULL;  // Pointer to the currently set scheduler
 
@@ -31,6 +32,7 @@ void set_scheduler(char *scheduler_name)
 }
 
 char* run_scheduler() {
+    printtogui("Ball\n");
     if (current_scheduler == NULL) {
         printf("No scheduler set.\n");
         return NULL;

@@ -12,6 +12,14 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkFileFilter" id="filefilter1">
+    <mime-types>
+      <mime-type>text/plain</mime-type>
+    </mime-types>
+    <patterns>
+      <pattern>*.txt</pattern>
+    </patterns>
+  </object>
   <object class="GtkPopover" id="popover1">
     <property name="width-request">-1</property>
     <property name="height-request">-1</property>
@@ -40,7 +48,7 @@
           <object class="GtkEntry" id="arrivaltimeinput">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <property name="placeholder-text" translatable="yes">Please Input Arrival Time</property>
+            <property name="placeholder-text" translatable="yes">Arrival TIme, Default is 0</property>
             <signal name="activate" handler="on_arrivaltimeinput_activate" swapped="no"/>
           </object>
           <packing>
@@ -57,6 +65,7 @@
               <object class="GtkFileChooserButton" id="programfilepath">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="filter">filefilter1</property>
                 <property name="title" translatable="yes">Please Choose Program Location</property>
                 <signal name="file-set" handler="on_programfilepath_file_set" swapped="no"/>
               </object>
@@ -186,7 +195,7 @@
           <!-- n-columns=3 n-rows=1 -->
           <object class="GtkGrid" id="overview">
             <property name="width-request">1080</property>
-            <property name="height-request">47</property>
+            <property name="height-request">30</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="row-homogeneous">True</property>

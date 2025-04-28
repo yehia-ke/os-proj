@@ -46,6 +46,7 @@ void set_userInputMutex(const char *text);
 void set_userOutputMutex(const char *text);
 void set_fileMutex(const char *text);
 
+void printtogui(const char *message);
 void show_error_message(const char *message);
 static char *get_current_timestamp();
 static gboolean console_output_callback(GIOChannel *source, GIOCondition condition, gpointer data);
