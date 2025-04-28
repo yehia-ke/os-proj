@@ -20,10 +20,9 @@ GtkWidget *schedulerlabel;
 GtkWidget *userInputMutex;
 GtkWidget *userOutputMutex;
 GtkWidget *fileMutex;
-Queue* TBD = NULL;
-int pid = 0;
+Queue* TBD;
+int pid = 1;
 char* cscheduler = NULL;
-
 GtkTreeStore *blockStore;
 GtkTreeStore *processStore;
 GtkTreeStore *readyStore;
@@ -33,15 +32,46 @@ GtkWidget *main_window;
 ManualClock *manualClock = NULL;
 AutomaticClock *automaticClock = NULL;
 char* clocktype = NULL;
+process* tempp = NULL;
+
+void show_error_message(const char *message)
+{
+    GtkWidget *dialog = gtk_message_dialog_new(
+        GTK_WINDOW(main_window), // Use the global main window
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_CLOSE,
+        "%s",
+        message);
+
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+void printtogui(char* message){
+    g_print(message);
+}
+
+PCB *load_program(const char *filepath, int pid)
+{
+    PCB *process = create_process(pid, (char *)filepath);
+    if (!process)
+    {
+        show_error_message("Process creation failed.");
+        exit(1);
+    }
+    return process;
+}
 
 void checkArrivalTime(){
     Queue* tmp = queue_create();
     while(!queue_is_empty(TBD)){
         process* p = queue_dequeue(TBD);
         if((p->arrival_time == AutomaticClock_getCycle(automaticClock)) || (p->arrival_time == ManualClock_getCycle(manualClock))){
-            PCB* hello = create_process(pid, p->path);
+            PCB* hello = load_program(p->path,pid);
             pid++;
             add_process_to_scheduler(hello);
+            g_print(hello->state);
         }
         else{
             queue_enqueue(tmp, p);
@@ -114,25 +144,12 @@ static void redirect_console_to_text_view(GtkWidget *log_text_view)
     io_channel = g_io_channel_unix_new(pipe_fd[0]);
     g_io_channel_set_flags(io_channel, G_IO_FLAG_NONBLOCK, NULL);
 
-    g_io_add_watch(io_channel, G_IO_IN | G_IO_PRI, console_output_callback, log_text_view);
+    g_io_add_watch(io_channel, G_IO_IN, console_output_callback, log_text_view);
 
     dup2(pipe_fd[1], STDOUT_FILENO);
     dup2(pipe_fd[1], STDERR_FILENO);
 }
 
-void show_error_message(const char *message)
-{
-    GtkWidget *dialog = gtk_message_dialog_new(
-        GTK_WINDOW(main_window), // Use the global main window
-        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-        GTK_MESSAGE_ERROR,
-        GTK_BUTTONS_CLOSE,
-        "%s",
-        message);
-
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-}
 
 static void update_blockStore()
 {
@@ -222,17 +239,74 @@ void set_fileMutex(const char *text)
 void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data)
 {
     g_print("Add Process Confirm button clicked.\n");
-    show_error_message("Process NOT added successfully.");
+    if(tempp == NULL){
+        show_error_message("No process selected.");
+    }
+    else if(tempp->path == NULL ){
+        show_error_message("No path selected.");
+    }
+    else{
+        g_print(tempp->path);
+        g_print("%d",tempp->arrival_time);
+        queue_enqueue(TBD, tempp);
+        show_error_message("Process added successfully.");
+    } 
+    
 }
 
 void on_arrivaltimeinput_activate(GtkWidget *widget, gpointer data)
 {
     g_print("Arrival time input activated: %s\n", gtk_entry_get_text(GTK_ENTRY(widget)));
+
+    const char *input_text = gtk_entry_get_text(GTK_ENTRY(widget));
+    int temptime = atoi(input_text);
+
+    // Initialize tempp if it is NULL
+    if (tempp == NULL)
+    {
+        tempp = malloc(sizeof(process));
+        if (tempp == NULL)
+        {
+            show_error_message("Memory allocation failed for the process structure.");
+            return;
+        }
+        tempp->path = NULL;
+        tempp->arrival_time = 0; // Initialize fields to avoid garbage values
+    }
+
+    tempp->arrival_time = temptime;
+    g_print("Arrival time set: %d\n", tempp->arrival_time);
 }
 
 void on_programfilepath_file_set(GtkWidget *widget, gpointer data)
 {
     g_print("File selected: %s\n", gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget)));
+    
+    char *selected_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
+    
+    // Initialize tempp if it is NULL
+    if (tempp == NULL)
+    {
+        tempp = malloc(sizeof(process));
+        if (tempp == NULL)
+        {
+            show_error_message("Memory allocation failed for the process structure.");
+            return;
+        }
+        tempp->path = NULL;
+        tempp->arrival_time = 0; // Initialize fields to avoid garbage values
+    }
+
+    // Allocate memory for the path and copy the selected file path
+    tempp->path = malloc(strlen(selected_path) + 1);
+    if (tempp->path == NULL)
+    {
+        show_error_message("Memory allocation failed for the process path.");
+        free(tempp); // Free tempp to avoid memory leaks
+        tempp = NULL;
+        return;
+    }
+    strcpy(tempp->path, selected_path);
 }
 
 void on_fcfs_activate(GtkWidget *widget, gpointer data)
@@ -415,3 +489,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+

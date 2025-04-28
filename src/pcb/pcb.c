@@ -1,14 +1,15 @@
 #include "pcb.h"
 #include <stdio.h>
 #include <string.h>
+#include "../main.h"
 
 PCB* create_process(int pid, char* program_file) {
     char file_path[256];
-    sprintf(file_path, "../programs/%s", program_file);
+    sprintf(file_path, program_file);
     FILE* fp = fopen(file_path, "r");
     if (!fp) {
-        printf("%s\n", file_path);
-        printf("Error: Could not open program file %s\n", program_file);
+        show_error_message(file_path);
+        show_error_message("Error: Could not open program file %s\n");
         return NULL;
     }
 
