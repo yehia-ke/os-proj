@@ -155,13 +155,12 @@ static void update_blockStore()
 
 static void update_processStore()
 {
-    show_error_message("Updating process store.");
     gtk_tree_store_clear(processStore);
 
     Queue *queue = get_process_queue();
     if (!queue || queue_is_empty(queue))
     {
-        show_error_message("Process queue is empty. or NULL");
+        g_print("Process Queue Empty");
         return;
     }
 
@@ -170,12 +169,22 @@ static void update_processStore()
     while (!queue_is_empty(queue))
     {
         PCB *process = (PCB *)queue_dequeue(queue);
-        show_error_message("Process assigned.");
         if(process){
-            show_error_message("Process is real.");
             GtkTreeIter iter;
         gtk_tree_store_append(processStore, &iter, NULL);
-        gtk_tree_store_set(processStore, &iter,0, process->pid,1, process->state,2, process->priority,3, process->mem_lower,4, process->mem_upper,-1);
+        char pid[20];
+        sprintf(pid, "%d", process->pid);
+        char priority[20];
+        sprintf(priority, "%d", process->priority);
+        char mem_lower[20];
+        sprintf(mem_lower, "%d", process->mem_lower);
+        char mem_upper[20];
+        sprintf(mem_upper, "%d", process->mem_upper);
+        char pc[20];
+        sprintf(pc, "%d", process->pc);
+        strcat(mem_lower, " - ");
+        strcat(mem_lower, mem_upper);
+        gtk_tree_store_set(processStore, &iter,0, pid,1, process->state,2, priority,3, mem_lower,4, pc,-1);
         queue_enqueue(temp_queue, process);
         }
 
