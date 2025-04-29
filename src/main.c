@@ -155,24 +155,26 @@ static void update_blockStore()
 
 static void update_processStore()
 {
+    show_error_message("Updating process store.");
     gtk_tree_store_clear(processStore);
 
     Queue *queue = get_process_queue();
     if (!queue || queue_is_empty(queue))
     {
+        show_error_message("Process queue is empty. or NULL");
     }
 
     Queue *temp_queue = queue_create();
 
     while (!queue_is_empty(queue))
     {
-        // Dequeue a process from the original queue
         PCB *process = (PCB *)queue_dequeue(queue);
+        show_error_message("Process assigned.");
         if(process){
+            show_error_message("Process is real.");
             GtkTreeIter iter;
         gtk_tree_store_append(processStore, &iter, NULL);
         gtk_tree_store_set(processStore, &iter,0, process->pid,1, process->state,2, process->priority,3, process->mem_lower,4, process->mem_upper,-1);
-        // Enqueue the process into the temporary queue
         queue_enqueue(temp_queue, process);
         }
 
@@ -464,7 +466,7 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data)
 void update_gui(){
 
     //update_blockStore();
-    //update_processStore();
+    update_processStore();
     //update_readyStore();
     //update_resourceblockStore();
     //update_runningStore();
@@ -503,11 +505,11 @@ int main(int argc, char *argv[])
     resourceblockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "resourceblockStore"));
     runningStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "runningStore"));
 
-    update_blockStore();
-    update_processStore();
-    update_readyStore();
-    update_resourceblockStore();
-    update_runningStore();
+    //update_blockStore();
+    //update_processStore();
+    //update_readyStore();
+    //update_resourceblockStore();
+    //update_runningStore();
 
     gtk_builder_connect_signals(builder, NULL);
 
