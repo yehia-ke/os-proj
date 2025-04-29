@@ -155,48 +155,36 @@ static void update_blockStore()
 
 static void update_processStore()
 {
-    // Clear the existing data from the table
     gtk_tree_store_clear(processStore);
 
-    // Get the process queue
     Queue *queue = get_process_queue();
     if (!queue || queue_is_empty(queue))
     {
-        // If the queue is empty, there's nothing to display
-        return;
     }
 
-    // Create a temporary queue to hold processes while iterating
     Queue *temp_queue = queue_create();
 
     while (!queue_is_empty(queue))
     {
         // Dequeue a process from the original queue
         PCB *process = (PCB *)queue_dequeue(queue);
-
-        // Add the process to the table
-        GtkTreeIter iter;
+        if(process){
+            GtkTreeIter iter;
         gtk_tree_store_append(processStore, &iter, NULL);
-        gtk_tree_store_set(processStore, &iter,
-                           0, process->pid,
-                           1, process->state,
-                           2, process->priority,
-                           3, process->mem_lower,
-                           4, process->mem_upper,
-                           -1);
-
+        gtk_tree_store_set(processStore, &iter,0, process->pid,1, process->state,2, process->priority,3, process->mem_lower,4, process->mem_upper,-1);
         // Enqueue the process into the temporary queue
         queue_enqueue(temp_queue, process);
+        }
+
+        
     }
 
-    // Restore all processes back to the original queue from the temporary queue
     while (!queue_is_empty(temp_queue))
     {
         PCB *process = (PCB *)queue_dequeue(temp_queue);
         queue_enqueue(queue, process);
     }
 
-    // Destroy the temporary queue
     queue_destroy(temp_queue);
 }
 
@@ -476,7 +464,7 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data)
 void update_gui(){
 
     //update_blockStore();
-    update_processStore();
+    //update_processStore();
     //update_readyStore();
     //update_resourceblockStore();
     //update_runningStore();
