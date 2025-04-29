@@ -162,6 +162,7 @@ static void update_processStore()
     if (!queue || queue_is_empty(queue))
     {
         show_error_message("Process queue is empty. or NULL");
+        return;
     }
 
     Queue *temp_queue = queue_create();

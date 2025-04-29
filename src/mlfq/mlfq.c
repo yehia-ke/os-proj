@@ -18,6 +18,7 @@ void initialize_mlfq() {
         }
         mlfq_ready_queue[i] = queue_create();  // Initialize each priority queue
     }
+    mlfq_process_queue = queue_create(); // Initialize the process queue
 }
 
 void mlfq_add_process(PCB* process) {

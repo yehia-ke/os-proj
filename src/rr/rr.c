@@ -13,6 +13,7 @@ void initialize_rr() {
     for (int i = 0; i < 3; i++) {
         rr_waiting_queue[i] = queue_create(); // Initialize each waiting queue
     }
+    rr_process_queue = queue_create(); // Initialize the process queue
 }
 
 void rr_add_process(PCB* process) {
