@@ -494,6 +494,16 @@ int main(int argc, char *argv[])
 
     gtk_init(&argc, &argv);
 
+
+    GtkCssProvider *css_provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_path(css_provider, "src/glade/style.css", NULL);
+
+    gtk_style_context_add_provider_for_screen(
+        gdk_screen_get_default(),
+        GTK_STYLE_PROVIDER(css_provider),
+        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
+    );
+
     builder = gtk_builder_new_from_file("src/glade/pt1.glade");
 
     main_window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));

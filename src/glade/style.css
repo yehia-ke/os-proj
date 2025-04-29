@@ -1,0 +1,9 @@
+.memory-grid {
+    border: 1px solid gray;
+}
+
+.memory-box {
+  background-color: rgba(0, 186, 0, 0.604);
+  border: 1px solid white;
+}
+
