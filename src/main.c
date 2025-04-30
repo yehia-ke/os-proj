@@ -257,7 +257,7 @@ static void update_memoryAndProcessStore()
                     } else {
                         g_print("Failed to retrieve style context for the box.\n");
                     }
-                    char *tooltip_text = get_memory_word(i); //strchr(get_memory_word(i), ':');
+                    char *tooltip_text = strchr(get_memory_word(i), ':') + 1;
                     if (tooltip_text != NULL) {
                         gtk_widget_set_tooltip_text(GTK_WIDGET(box), tooltip_text);
                     } else {
@@ -285,6 +285,33 @@ static void update_memoryAndProcessStore()
     }
 
     queue_destroy(temp_queue);
+}
+
+static void clear_memoryBoxes()
+{
+    int j = 0;
+    while (j < 60)
+    {
+        GList *children = gtk_container_get_children(GTK_CONTAINER(memoryBoxes[j]));
+        GtkWidget *label = GTK_WIDGET(children->data);
+        //show_error_message(gtk_label_get_text(GTK_LABEL(label)));
+        if (GTK_IS_LABEL(label)) {
+            char *temp = malloc(50 * sizeof(char));
+            sprintf(temp, "%d: Free", j);
+            gtk_label_set_text(GTK_LABEL(label), temp);
+        }
+
+        GtkStyleContext *box_context = gtk_widget_get_style_context(GTK_WIDGET(memoryBoxes[j]));
+        if (box_context != NULL) {
+            if (gtk_style_context_has_class(box_context, "memory-box-red")) {
+                gtk_style_context_remove_class(box_context, "memory-box-red");
+            }
+            gtk_style_context_add_class(box_context, "memory-box");
+        } else {
+            g_print("Failed to retrieve style context for the box.\n");
+        }
+        j++;
+    }
 }
 
 static void update_readyStore()
@@ -580,8 +607,8 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data)
 
 void update_gui()
 {
-
     update_blockStore();
+    clear_memoryBoxes();
     update_memoryAndProcessStore();
     update_readyStore();
     update_resourceblockStore();
