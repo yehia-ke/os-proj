@@ -12,6 +12,7 @@
 #include "scheduler/scheduler.h"
 #include "AutomaticClock/AutomaticClock.h"
 #include "ManualClock/ManualClock.h"
+#include "./memory/memory.h"
 #include <unistd.h>
 #include <glib.h>
 

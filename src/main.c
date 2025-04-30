@@ -9,6 +9,7 @@
 #include "scheduler/scheduler.h"
 #include "AutomaticClock/AutomaticClock.h"
 #include "ManualClock/ManualClock.h"
+#include "./memory/memory.h"
 #include <unistd.h>
 // Ensure this line is present to include GLib definitions
 #include <glib.h>
@@ -217,7 +218,16 @@ static void update_memoryAndProcessStore()
                         varName = NULL;
                     }
                 } else if (i >= process->mem_lower + 6) {
-                    varName = strtok(memory_word, ":");
+                    char *start = memory_word;
+                    char *end = strchr(memory_word, ':');
+                    if (end && end > start) {
+                        size_t length = end - start;
+                        varName = malloc(length + 1);
+                        strncpy(varName, start, length);
+                        varName[length] = '\0';
+                    } else {
+                        varName = NULL;
+                    }
                 }
 
                 // Allocate memory for the label text
