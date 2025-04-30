@@ -32,6 +32,7 @@ GtkTreeStore *readyStore;
 GtkTreeStore *resourceblockStore;
 GtkTreeStore *runningStore;
 GtkBox *memoryBoxes[60];
+GtkStyleContext *context;
 GtkWidget *main_window;
 ManualClock *manualClock = NULL;
 AutomaticClock *automaticClock = NULL;
@@ -599,6 +600,7 @@ int main(int argc, char *argv[])
         sprintf(box_name, "box%d", i);
         memoryBoxes[i] = GTK_BOX(gtk_builder_get_object(builder, box_name));
     }
+    context = gtk_widget_get_style_context(GTK_WIDGET(memoryBoxes[1]));
 
     // update_blockStore();
     // update_processStore();
