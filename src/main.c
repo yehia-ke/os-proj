@@ -368,9 +368,12 @@ void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data)
     }
     else
     {
-        g_print(tempp->path);
-        g_print("%d", tempp->arrival_time);
-        queue_enqueue(TBD, tempp);
+        process *zeft = malloc(sizeof(process));
+        zeft->arrival_time = tempp->arrival_time;
+        zeft->path = tempp->path;
+        g_print(zeft->path);
+        g_print("%d", zeft->arrival_time);
+        queue_enqueue(TBD, zeft);
         show_error_message("Process added successfully.");
     }
 }
