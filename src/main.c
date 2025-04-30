@@ -32,7 +32,6 @@ GtkTreeStore *readyStore;
 GtkTreeStore *resourceblockStore;
 GtkTreeStore *runningStore;
 GtkBox *memoryBoxes[60];
-GtkStyleContext *context;
 GtkWidget *main_window;
 ManualClock *manualClock = NULL;
 AutomaticClock *automaticClock = NULL;
@@ -201,15 +200,42 @@ static void update_memoryAndProcessStore()
             for (int i = process->mem_lower; i <= process->mem_upper; i++)
             {
                 char *memory_word = get_memory_word(i);
-                GtkWidget *box = GTK_WIDGET(memoryBoxes[i]);
-                char *varName = strchr(memory_word, '_') + 1;
+                GtkBox *box = memoryBoxes[i];
+                char *varName;
+
+                // Determine varName based on memory_word
+                if (i >= process->mem_lower && i <= process->mem_lower + 5) {
+                    varName = strchr(memory_word, '_') + 1;
+                } else if (i >= process->mem_lower + 6) {
+                    varName = strtok(memory_word, ":");
+                }
+
+                // Allocate memory for the label text
                 char *temp = malloc(50 * sizeof(char));
-                show_error_message("test");
                 sprintf(temp, "%d: Process %d %s", i, process->pid, varName);
-                GtkWidget *label = gtk_bin_get_child(GTK_BIN(box));
-                gtk_label_set_text(GTK_LABEL(label), temp);
-                gtk_style_context_remove_class(context, "memory-grid");
-                gtk_style_context_add_class(context, "memory-grid-red");
+
+                // Ensure the box contains a valid child widget
+                if (GTK_IS_BOX(box)) {
+                    GList *children = gtk_container_get_children(GTK_CONTAINER(box));
+                    if (children != NULL) {
+                        GtkWidget *label = GTK_WIDGET(children->data);
+                        if (GTK_IS_LABEL(label)) {
+                            gtk_label_set_text(GTK_LABEL(label), temp);
+                        }
+                        g_list_free(children);
+                    }
+                } else{
+                    g_print("Box is not a valid GTK Box\n");
+                }
+
+                // Update the style context
+                GtkStyleContext *box_context = gtk_widget_get_style_context(GTK_WIDGET(box));
+                if (GTK_IS_STYLE_CONTEXT(box_context)) {
+                    gtk_style_context_remove_class(box_context, "memory-grid");
+                    gtk_style_context_add_class(box_context, "memory-grid-red");
+                }
+
+                free(temp); // Free allocated memory
             }
             
             queue_enqueue(temp_queue, process);
@@ -573,7 +599,6 @@ int main(int argc, char *argv[])
         sprintf(box_name, "box%d", i);
         memoryBoxes[i] = GTK_BOX(gtk_builder_get_object(builder, box_name));
     }
-    context = gtk_widget_get_style_context(GTK_WIDGET(memoryBoxes[1]));
 
     // update_blockStore();
     // update_processStore();
