@@ -853,7 +853,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <child>
-                          <object class="GtkBox" id="box1">
+                          <object class="GtkBox" id="box0">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="hexpand">True</property>
@@ -861,6 +861,38 @@
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkLabel" id="boxtxt1">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">0: Free</property>
+                                <property name="justify">center</property>
+                                <property name="ellipsize">middle</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <style>
+                              <class name="memory-box"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="box1">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel" id="boxtxt2">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -880,7 +912,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -892,7 +924,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt2">
+                              <object class="GtkLabel" id="boxtxt3">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -912,7 +944,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -924,7 +956,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt3">
+                              <object class="GtkLabel" id="boxtxt4">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -944,7 +976,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -956,7 +988,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt4">
+                              <object class="GtkLabel" id="boxtxt5">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -976,7 +1008,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -988,7 +1020,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt5">
+                              <object class="GtkLabel" id="boxtxt6">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1008,7 +1040,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -1020,7 +1052,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt6">
+                              <object class="GtkLabel" id="boxtxt7">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1040,8 +1072,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">0</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
@@ -1052,7 +1084,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt7">
+                              <object class="GtkLabel" id="boxtxt8">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1072,7 +1104,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">1</property>
                           </packing>
                         </child>
@@ -1084,7 +1116,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt8">
+                              <object class="GtkLabel" id="boxtxt9">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1104,7 +1136,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">1</property>
                           </packing>
                         </child>
@@ -1116,7 +1148,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt9">
+                              <object class="GtkLabel" id="boxtxt10">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1136,7 +1168,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">1</property>
                           </packing>
                         </child>
@@ -1148,7 +1180,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt10">
+                              <object class="GtkLabel" id="boxtxt11">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1168,7 +1200,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">1</property>
                           </packing>
                         </child>
@@ -1180,7 +1212,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt11">
+                              <object class="GtkLabel" id="boxtxt12">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1200,7 +1232,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">1</property>
                           </packing>
                         </child>
@@ -1212,7 +1244,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt12">
+                              <object class="GtkLabel" id="boxtxt13">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1232,8 +1264,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">1</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -1244,7 +1276,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt13">
+                              <object class="GtkLabel" id="boxtxt14">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1264,7 +1296,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">2</property>
                           </packing>
                         </child>
@@ -1276,7 +1308,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt14">
+                              <object class="GtkLabel" id="boxtxt15">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1296,7 +1328,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">2</property>
                           </packing>
                         </child>
@@ -1308,7 +1340,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt15">
+                              <object class="GtkLabel" id="boxtxt16">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1328,7 +1360,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">2</property>
                           </packing>
                         </child>
@@ -1340,7 +1372,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt16">
+                              <object class="GtkLabel" id="boxtxt17">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1360,7 +1392,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">2</property>
                           </packing>
                         </child>
@@ -1372,7 +1404,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt17">
+                              <object class="GtkLabel" id="boxtxt18">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1392,7 +1424,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">2</property>
                           </packing>
                         </child>
@@ -1404,7 +1436,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt18">
+                              <object class="GtkLabel" id="boxtxt19">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1424,8 +1456,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">2</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">3</property>
                           </packing>
                         </child>
                         <child>
@@ -1436,7 +1468,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt19">
+                              <object class="GtkLabel" id="boxtxt20">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1456,7 +1488,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">3</property>
                           </packing>
                         </child>
@@ -1468,7 +1500,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt20">
+                              <object class="GtkLabel" id="boxtxt21">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1488,7 +1520,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">3</property>
                           </packing>
                         </child>
@@ -1500,7 +1532,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt21">
+                              <object class="GtkLabel" id="boxtxt22">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1520,7 +1552,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">3</property>
                           </packing>
                         </child>
@@ -1532,7 +1564,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt22">
+                              <object class="GtkLabel" id="boxtxt23">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1552,7 +1584,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">3</property>
                           </packing>
                         </child>
@@ -1564,7 +1596,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt23">
+                              <object class="GtkLabel" id="boxtxt24">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1584,7 +1616,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">3</property>
                           </packing>
                         </child>
@@ -1596,7 +1628,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt24">
+                              <object class="GtkLabel" id="boxtxt25">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1616,8 +1648,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">3</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">4</property>
                           </packing>
                         </child>
                         <child>
@@ -1628,7 +1660,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt25">
+                              <object class="GtkLabel" id="boxtxt26">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1648,7 +1680,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">4</property>
                           </packing>
                         </child>
@@ -1660,7 +1692,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt26">
+                              <object class="GtkLabel" id="boxtxt27">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1680,7 +1712,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">4</property>
                           </packing>
                         </child>
@@ -1692,7 +1724,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt27">
+                              <object class="GtkLabel" id="boxtxt28">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1712,7 +1744,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">4</property>
                           </packing>
                         </child>
@@ -1724,7 +1756,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt28">
+                              <object class="GtkLabel" id="boxtxt29">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1744,7 +1776,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">4</property>
                           </packing>
                         </child>
@@ -1756,7 +1788,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt29">
+                              <object class="GtkLabel" id="boxtxt30">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1776,7 +1808,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">4</property>
                           </packing>
                         </child>
@@ -1788,7 +1820,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt30">
+                              <object class="GtkLabel" id="boxtxt31">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1808,8 +1840,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">4</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">5</property>
                           </packing>
                         </child>
                         <child>
@@ -1820,7 +1852,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt31">
+                              <object class="GtkLabel" id="boxtxt32">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1840,7 +1872,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">5</property>
                           </packing>
                         </child>
@@ -1852,7 +1884,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt32">
+                              <object class="GtkLabel" id="boxtxt33">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1872,7 +1904,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">5</property>
                           </packing>
                         </child>
@@ -1884,7 +1916,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt33">
+                              <object class="GtkLabel" id="boxtxt34">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1904,7 +1936,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">5</property>
                           </packing>
                         </child>
@@ -1916,7 +1948,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt34">
+                              <object class="GtkLabel" id="boxtxt35">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1936,7 +1968,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">5</property>
                           </packing>
                         </child>
@@ -1948,7 +1980,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt35">
+                              <object class="GtkLabel" id="boxtxt36">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -1968,7 +2000,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">5</property>
                           </packing>
                         </child>
@@ -1980,7 +2012,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt36">
+                              <object class="GtkLabel" id="boxtxt37">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2000,8 +2032,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">5</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">6</property>
                           </packing>
                         </child>
                         <child>
@@ -2012,7 +2044,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt37">
+                              <object class="GtkLabel" id="boxtxt38">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2032,7 +2064,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">6</property>
                           </packing>
                         </child>
@@ -2044,7 +2076,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt38">
+                              <object class="GtkLabel" id="boxtxt39">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2064,7 +2096,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">6</property>
                           </packing>
                         </child>
@@ -2076,7 +2108,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt39">
+                              <object class="GtkLabel" id="boxtxt40">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2096,7 +2128,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">6</property>
                           </packing>
                         </child>
@@ -2108,7 +2140,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt40">
+                              <object class="GtkLabel" id="boxtxt41">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2128,7 +2160,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">6</property>
                           </packing>
                         </child>
@@ -2140,7 +2172,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt41">
+                              <object class="GtkLabel" id="boxtxt42">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2160,7 +2192,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">6</property>
                           </packing>
                         </child>
@@ -2172,7 +2204,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt42">
+                              <object class="GtkLabel" id="boxtxt43">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2192,8 +2224,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">6</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">7</property>
                           </packing>
                         </child>
                         <child>
@@ -2204,7 +2236,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt43">
+                              <object class="GtkLabel" id="boxtxt44">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2224,7 +2256,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">7</property>
                           </packing>
                         </child>
@@ -2236,7 +2268,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt44">
+                              <object class="GtkLabel" id="boxtxt45">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2256,7 +2288,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">7</property>
                           </packing>
                         </child>
@@ -2268,7 +2300,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt45">
+                              <object class="GtkLabel" id="boxtxt46">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2288,7 +2320,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">7</property>
                           </packing>
                         </child>
@@ -2300,7 +2332,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt46">
+                              <object class="GtkLabel" id="boxtxt47">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2320,7 +2352,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">7</property>
                           </packing>
                         </child>
@@ -2332,7 +2364,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt47">
+                              <object class="GtkLabel" id="boxtxt48">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2352,7 +2384,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">7</property>
                           </packing>
                         </child>
@@ -2364,7 +2396,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt48">
+                              <object class="GtkLabel" id="boxtxt49">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2384,8 +2416,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">7</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">8</property>
                           </packing>
                         </child>
                         <child>
@@ -2396,7 +2428,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt49">
+                              <object class="GtkLabel" id="boxtxt50">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2416,7 +2448,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">8</property>
                           </packing>
                         </child>
@@ -2428,7 +2460,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt50">
+                              <object class="GtkLabel" id="boxtxt51">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2448,7 +2480,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">8</property>
                           </packing>
                         </child>
@@ -2460,7 +2492,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt51">
+                              <object class="GtkLabel" id="boxtxt52">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2480,7 +2512,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">8</property>
                           </packing>
                         </child>
@@ -2492,7 +2524,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt52">
+                              <object class="GtkLabel" id="boxtxt53">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2512,7 +2544,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">8</property>
                           </packing>
                         </child>
@@ -2524,7 +2556,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt53">
+                              <object class="GtkLabel" id="boxtxt54">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2544,7 +2576,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">8</property>
                           </packing>
                         </child>
@@ -2556,7 +2588,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt54">
+                              <object class="GtkLabel" id="boxtxt55">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2576,8 +2608,8 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
-                            <property name="top-attach">8</property>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">9</property>
                           </packing>
                         </child>
                         <child>
@@ -2588,7 +2620,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt55">
+                              <object class="GtkLabel" id="boxtxt56">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2608,7 +2640,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">9</property>
                           </packing>
                         </child>
@@ -2620,7 +2652,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt56">
+                              <object class="GtkLabel" id="boxtxt57">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2640,7 +2672,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">9</property>
                           </packing>
                         </child>
@@ -2652,7 +2684,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt57">
+                              <object class="GtkLabel" id="boxtxt58">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2672,7 +2704,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">9</property>
                           </packing>
                         </child>
@@ -2684,7 +2716,7 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt58">
+                              <object class="GtkLabel" id="boxtxt59">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -2704,7 +2736,7 @@
                             </style>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">9</property>
                           </packing>
                         </child>
@@ -2716,44 +2748,12 @@
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="boxtxt59">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">center</property>
-                                <property name="valign">center</property>
-                                <property name="label" translatable="yes">59: Free</property>
-                                <property name="justify">center</property>
-                                <property name="ellipsize">middle</property>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <style>
-                              <class name="memory-box"/>
-                            </style>
-                          </object>
-                          <packing>
-                            <property name="left-attach">4</property>
-                            <property name="top-attach">9</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="box60">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="hexpand">True</property>
-                            <property name="vexpand">True</property>
-                            <property name="orientation">vertical</property>
-                            <child>
                               <object class="GtkLabel" id="boxtxt60">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">60: Free</property>
+                                <property name="label" translatable="yes">59: Free</property>
                                 <property name="justify">center</property>
                                 <property name="ellipsize">middle</property>
                               </object>

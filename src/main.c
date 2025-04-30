@@ -206,7 +206,16 @@ static void update_memoryAndProcessStore()
 
                 // Determine varName based on memory_word
                 if (i >= process->mem_lower && i <= process->mem_lower + 5) {
-                    varName = strchr(memory_word, '_') + 1;
+                    char *start = strchr(memory_word, '_') + 1;
+                    char *end = strchr(start, ':');
+                    if (start && end && end > start) {
+                        size_t length = end - start;
+                        varName = malloc(length + 1);
+                        strncpy(varName, start, length);
+                        varName[length] = '\0';
+                    } else {
+                        varName = NULL;
+                    }
                 } else if (i >= process->mem_lower + 6) {
                     varName = strtok(memory_word, ":");
                 }
@@ -230,10 +239,22 @@ static void update_memoryAndProcessStore()
                 }
 
                 // Update the style context
-                GtkStyleContext *box_context = gtk_widget_get_style_context(GTK_WIDGET(box));
-                if (GTK_IS_STYLE_CONTEXT(box_context)) {
-                    gtk_style_context_remove_class(box_context, "memory-grid");
-                    gtk_style_context_add_class(box_context, "memory-grid-red");
+                if (GTK_IS_WIDGET(box)) {
+                    GtkStyleContext *box_context = gtk_widget_get_style_context(GTK_WIDGET(box));
+                    if (box_context != NULL) {
+                            gtk_style_context_remove_class(box_context, "memory-box");
+                            gtk_style_context_add_class(box_context, "memory-box-red");
+                    } else {
+                        g_print("Failed to retrieve style context for the box.\n");
+                    }
+                    char *tooltip_text = get_memory_word(i); //strchr(get_memory_word(i), ':');
+                    if (tooltip_text != NULL) {
+                        gtk_widget_set_tooltip_text(GTK_WIDGET(box), tooltip_text);
+                    } else {
+                        gtk_widget_set_tooltip_text(GTK_WIDGET(box), "No tooltip available");
+                    }
+                } else {
+                    g_print("Box is not a valid GTK Widget.\n");
                 }
 
                 free(temp); // Free allocated memory
@@ -594,19 +615,14 @@ int main(int argc, char *argv[])
     resourceblockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "resourceblockStore"));
     runningStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "runningStore"));
 
-    for (int i = 1; i <= 60; i++)
+    for (int i = 0; i < 60; i++)
     {
         char box_name[20];
         sprintf(box_name, "box%d", i);
         memoryBoxes[i] = GTK_BOX(gtk_builder_get_object(builder, box_name));
     }
-    context = gtk_widget_get_style_context(GTK_WIDGET(memoryBoxes[1]));
 
-    // update_blockStore();
-    // update_processStore();
-    // update_readyStore();
-    // update_resourceblockStore();
-    // update_runningStore();
+   
 
     gtk_builder_connect_signals(builder, NULL);
 
