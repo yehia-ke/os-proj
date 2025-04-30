@@ -10,6 +10,7 @@
 #include "AutomaticClock/AutomaticClock.h"
 #include "ManualClock/ManualClock.h"
 #include <unistd.h>
+// Ensure this line is present to include GLib definitions
 #include <glib.h>
 #include "./process/process.h"
 #include "./popup/popup.h"
@@ -22,23 +23,26 @@ GtkWidget *schedulerlabel;
 GtkWidget *userInputMutex;
 GtkWidget *userOutputMutex;
 GtkWidget *fileMutex;
-Queue* TBD;
+Queue *TBD;
 int pid = 1;
-char* cscheduler = NULL;
+char *cscheduler = NULL;
 GtkTreeStore *blockStore;
 GtkTreeStore *processStore;
 GtkTreeStore *readyStore;
 GtkTreeStore *resourceblockStore;
 GtkTreeStore *runningStore;
+GtkBox *memoryBoxes[60];
+GtkStyleContext *context;
 GtkWidget *main_window;
 ManualClock *manualClock = NULL;
 AutomaticClock *automaticClock = NULL;
-char* clocktype = NULL;
-process* tempp = NULL;
+char *clocktype = NULL;
+process *tempp = NULL;
 
 void update_gui();
 
-void printtogui(char* message){
+void printtogui(char *message)
+{
     g_print(message);
 }
 
@@ -53,34 +57,41 @@ PCB *load_program(const char *filepath, int pid)
     return process;
 }
 
-void checkArrivalTime(){
-    Queue* tmp = queue_create();
-    while(!queue_is_empty(TBD)){
-        process* p = queue_dequeue(TBD);
-        if((p->arrival_time == AutomaticClock_getCycle(automaticClock)) || (p->arrival_time == ManualClock_getCycle(manualClock))){
-            PCB* hello = load_program(p->path,pid);
+void checkArrivalTime()
+{
+    Queue *tmp = queue_create();
+    while (!queue_is_empty(TBD))
+    {
+        process *p = queue_dequeue(TBD);
+        if ((p->arrival_time == AutomaticClock_getCycle(automaticClock)) || (p->arrival_time == ManualClock_getCycle(manualClock)))
+        {
+            PCB *hello = load_program(p->path, pid);
             pid++;
             add_process_to_scheduler(hello);
             g_print(hello->state);
         }
-        else{
+        else
+        {
             queue_enqueue(tmp, p);
         }
     }
-    while(!queue_is_empty(tmp)){
-        process* p = queue_dequeue(tmp);
+    while (!queue_is_empty(tmp))
+    {
+        process *p = queue_dequeue(tmp);
         queue_enqueue(TBD, p);
     }
     queue_destroy(tmp);
 }
 
-void* non_blocking_loop(void* arg) {
-    while (automaticClock->is_running) {
+void *non_blocking_loop(void *arg)
+{
+    while (automaticClock->is_running)
+    {
         checkArrivalTime(); // Infinite loop
         run_scheduler();
         AutomaticClock_update(automaticClock);
         update_gui();
-        //sleep(1); // Sleep for 1 second to avoid excessive CPU usage
+        // sleep(1); // Sleep for 1 second to avoid excessive CPU usage
         g_print("Automatic Clock updated.\n");
         usleep(1000 * 1000);
     }
@@ -141,7 +152,6 @@ static void redirect_console_to_text_view(GtkWidget *log_text_view)
     dup2(pipe_fd[1], STDERR_FILENO);
 }
 
-
 static void update_blockStore()
 {
     gtk_tree_store_clear(blockStore);
@@ -153,7 +163,7 @@ static void update_blockStore()
     gtk_tree_store_set(blockStore, &iter, 0, "Block PID 2", 1, "Block Inst 2", 2, "Block Time 2", -1);
 }
 
-static void update_processStore()
+static void update_memoryAndProcessStore()
 {
     gtk_tree_store_clear(processStore);
 
@@ -169,26 +179,45 @@ static void update_processStore()
     while (!queue_is_empty(queue))
     {
         PCB *process = (PCB *)queue_dequeue(queue);
-        if(process){
+        if (process)
+        {
             GtkTreeIter iter;
-        gtk_tree_store_append(processStore, &iter, NULL);
-        char pid[20];
-        sprintf(pid, "%d", process->pid);
-        char priority[20];
-        sprintf(priority, "%d", process->priority);
-        char mem_lower[20];
-        sprintf(mem_lower, "%d", process->mem_lower);
-        char mem_upper[20];
-        sprintf(mem_upper, "%d", process->mem_upper);
-        char pc[20];
-        sprintf(pc, "%d", process->pc);
-        strcat(mem_lower, " - ");
-        strcat(mem_lower, mem_upper);
-        gtk_tree_store_set(processStore, &iter,0, pid,1, process->state,2, priority,3, mem_lower,4, pc,-1);
-        queue_enqueue(temp_queue, process);
-        }
+            gtk_tree_store_append(processStore, &iter, NULL);
+            char pid[20];
+            sprintf(pid, "%d", process->pid);
+            char priority[20];
+            sprintf(priority, "%d", process->priority);
+            char mem_lower[20];
+            sprintf(mem_lower, "%d", process->mem_lower);
+            char mem_upper[20];
+            sprintf(mem_upper, "%d", process->mem_upper);
+            char pc[20];
+            sprintf(pc, "%d", process->pc);
+            strcat(mem_lower, " - ");
+            strcat(mem_lower, mem_upper);
+            gtk_tree_store_set(processStore, &iter, 0, pid, 1, process->state, 2, priority, 3, mem_lower, 4, pc, -1);
 
-        
+            // Update the memory grid
+            for (int i = process->mem_lower; i <= process->mem_upper; i++)
+            {
+                char *memory_word = get_memory_word(i);
+                GtkWidget *box = GTK_WIDGET(memoryBoxes[i]);
+                char *varName = strchr(memory_word, '_') + 1;
+                char *temp = malloc(50 * sizeof(char));
+                show_error_message("test");
+                sprintf(temp, "%d: Process %d %s", i, process->pid, varName);
+                GtkWidget *label = gtk_bin_get_child(GTK_BIN(box));
+                gtk_label_set_text(GTK_LABEL(label), temp);
+                gtk_style_context_remove_class(context, "memory-grid");
+                gtk_style_context_add_class(context, "memory-grid-red");
+            }
+            
+            queue_enqueue(temp_queue, process);
+        }
+        else
+        {
+            g_print("Process is NULL\n");
+        }
     }
 
     while (!queue_is_empty(temp_queue))
@@ -267,22 +296,25 @@ void set_fileMutex(const char *text)
 void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data)
 {
     g_print("Add Process Confirm button clicked.\n");
-    if(tempp == NULL){
+    if (tempp == NULL)
+    {
         show_error_message("No process selected.");
     }
-    else if(tempp->path == NULL ){
+    else if (tempp->path == NULL)
+    {
         show_error_message("No path selected.");
     }
-    else if(tempp->arrival_time < AutomaticClock_getCycle(automaticClock) || tempp->arrival_time < ManualClock_getCycle(manualClock)) {
+    else if (tempp->arrival_time < AutomaticClock_getCycle(automaticClock) || tempp->arrival_time < ManualClock_getCycle(manualClock))
+    {
         show_error_message("Arrival Time cannot be less than the current clock cycle.");
     }
-    else{
+    else
+    {
         g_print(tempp->path);
-        g_print("%d",tempp->arrival_time);
+        g_print("%d", tempp->arrival_time);
         queue_enqueue(TBD, tempp);
         show_error_message("Process added successfully.");
-    } 
-    
+    }
 }
 
 void on_arrivaltimeinput_activate(GtkWidget *widget, gpointer data)
@@ -312,9 +344,9 @@ void on_arrivaltimeinput_activate(GtkWidget *widget, gpointer data)
 void on_programfilepath_file_set(GtkWidget *widget, gpointer data)
 {
     g_print("File selected: %s\n", gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget)));
-    
+
     char *selected_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-    
+
     // Initialize tempp if it is NULL
     if (tempp == NULL)
     {
@@ -342,42 +374,48 @@ void on_programfilepath_file_set(GtkWidget *widget, gpointer data)
 
 void on_fcfs_activate(GtkWidget *widget, gpointer data)
 {
-    if(clocktype == NULL){
+    if (clocktype == NULL)
+    {
         g_print("First Come First Serve selected.\n");
-    set_scheduler("fcfs");
-    cscheduler = "fcfs";
-    set_schedulerlabel("Active Scheduler: FCFS");
-    show_error_message("First Come First Serve selected.");
+        set_scheduler("fcfs");
+        cscheduler = "fcfs";
+        set_schedulerlabel("Active Scheduler: FCFS");
+        show_error_message("First Come First Serve selected.");
     }
-    else{
+    else
+    {
         show_error_message("Scheduler already set.");
     }
 }
 
 void on_rr_activate(GtkWidget *widget, gpointer data)
 {
-    if(clocktype == NULL){
+    if (clocktype == NULL)
+    {
         g_print("Round Robin Selected.\n");
-    set_scheduler("rr");
-    cscheduler = "rr";
-    set_schedulerlabel("Active Scheduler: RR");
-    show_error_message("Round Robin Selected.");
+        set_scheduler("rr");
+        cscheduler = "rr";
+        set_schedulerlabel("Active Scheduler: RR");
+        show_error_message("Round Robin Selected.");
     }
-    else{
+    else
+    {
         show_error_message("Scheduler already set.");
     }
 }
 
 void on_mlfq_activate(GtkWidget *widget, gpointer data)
 {
-    if(clocktype == NULL){
+    if (clocktype == NULL)
+    {
         g_print("Multi Level Feedback Queue Selected.\n");
-    set_scheduler("mlfq");
-    cscheduler = "mlfq";
-    set_schedulerlabel("Active Scheduler: MLFQ");
-    show_error_message("Multi Level Feedback Queue selected.");
+        set_scheduler("mlfq");
+        cscheduler = "mlfq";
+        set_schedulerlabel("Active Scheduler: MLFQ");
+        show_error_message("Multi Level Feedback Queue selected.");
     }
-    else{
+    else
+    {
         show_error_message("Scheduler already set.");
     }
 }
@@ -385,7 +423,7 @@ void on_mlfq_activate(GtkWidget *widget, gpointer data)
 void on_start_clicked(GtkWidget *widget, gpointer data)
 {
     g_print("Start Simulation clicked.\n");
-    update_processStore();
+    update_memoryAndProcessStore();
 }
 
 void on_stop_clicked(GtkWidget *widget, gpointer data)
@@ -399,21 +437,25 @@ void on_reset_clicked(GtkWidget *widget, gpointer data)
 
 void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
 {
-    if(cscheduler == NULL){
+    if (cscheduler == NULL)
+    {
         show_error_message("No scheduler set.");
         return;
     }
-    else{
-        if(automaticClock != NULL){
-            if(clocktype == NULL){
+    else
+    {
+        if (automaticClock != NULL)
+        {
+            if (clocktype == NULL)
+            {
                 clocktype = "a";
                 AutomaticClock_start(automaticClock);
                 g_print("Automatic Clock started.\n");
                 pthread_t thread;
                 pthread_create(&thread, NULL, non_blocking_loop, NULL);
-                
             }
-            else if(clocktype == "m"){
+            else if (clocktype == "m")
+            {
                 clocktype = "a";
                 int cc = ManualClock_getCycle(manualClock);
                 automaticClock->current_cycle = cc;
@@ -422,7 +464,8 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
                 pthread_t thread;
                 pthread_create(&thread, NULL, non_blocking_loop, NULL);
             }
-            else{
+            else
+            {
                 show_error_message("Automatic Clock is already running.");
             }
         }
@@ -431,56 +474,57 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
 
 void on_manualstep_clicked(GtkWidget *widget, gpointer data)
 {
-    if(cscheduler == NULL){
+    if (cscheduler == NULL)
+    {
         show_error_message("No scheduler set.");
         return;
     }
-    else{
+    else
+    {
         if (manualClock != NULL && ((clocktype == NULL) || (clocktype == "m")))
-    {
-        clocktype = "m";
-        g_print("Manual Step clicked.\n");
-        checkArrivalTime();
-        run_scheduler();
-        ManualClock_tick(manualClock);
-        update_gui();
-        int clocktemp = ManualClock_getCycle(manualClock);
-        char clockcyclemichael[20];
-        sprintf(clockcyclemichael, "%d", clocktemp);
-        char message[100];
-        snprintf(message, sizeof(message), "Current Clock Cycle: %s", clockcyclemichael);
-        set_clocklabel(message);
-    }
-    else if(clocktype == "a")
-    {
-        checkArrivalTime();
-        run_scheduler();
-        automaticClock->is_running = FALSE;
-        int cc = AutomaticClock_getCycle(automaticClock);
-        manualClock->current_cycle = cc;
-        clocktype = "m";
-        g_print("Manual Step clicked.\n");
-        ManualClock_tick(manualClock);
-        update_gui();
-        int clocktemp = ManualClock_getCycle(manualClock);
-        char clockcyclemichael[20];
-        sprintf(clockcyclemichael, "%d", clocktemp);
-        char message[100];
-        snprintf(message, sizeof(message), "Current Clock Cycle: %s", clockcyclemichael);
-        set_clocklabel(message);
-        
-    }
+        {
+            clocktype = "m";
+            g_print("Manual Step clicked.\n");
+            checkArrivalTime();
+            run_scheduler();
+            ManualClock_tick(manualClock);
+            update_gui();
+            int clocktemp = ManualClock_getCycle(manualClock);
+            char clockcyclemichael[20];
+            sprintf(clockcyclemichael, "%d", clocktemp);
+            char message[100];
+            snprintf(message, sizeof(message), "Current Clock Cycle: %s", clockcyclemichael);
+            set_clocklabel(message);
+        }
+        else if (clocktype == "a")
+        {
+            checkArrivalTime();
+            run_scheduler();
+            automaticClock->is_running = FALSE;
+            int cc = AutomaticClock_getCycle(automaticClock);
+            manualClock->current_cycle = cc;
+            clocktype = "m";
+            g_print("Manual Step clicked.\n");
+            ManualClock_tick(manualClock);
+            update_gui();
+            int clocktemp = ManualClock_getCycle(manualClock);
+            char clockcyclemichael[20];
+            sprintf(clockcyclemichael, "%d", clocktemp);
+            char message[100];
+            snprintf(message, sizeof(message), "Current Clock Cycle: %s", clockcyclemichael);
+            set_clocklabel(message);
+        }
     }
 }
 
-void update_gui(){
+void update_gui()
+{
 
-    //update_blockStore();
-    update_processStore();
-    //update_readyStore();
-    //update_resourceblockStore();
-    //update_runningStore();
-
+    update_blockStore();
+    update_memoryAndProcessStore();
+    update_readyStore();
+    update_resourceblockStore();
+    update_runningStore();
 }
 
 int main(int argc, char *argv[])
@@ -494,15 +538,13 @@ int main(int argc, char *argv[])
 
     gtk_init(&argc, &argv);
 
-
     GtkCssProvider *css_provider = gtk_css_provider_new();
     gtk_css_provider_load_from_path(css_provider, "src/glade/style.css", NULL);
 
     gtk_style_context_add_provider_for_screen(
         gdk_screen_get_default(),
         GTK_STYLE_PROVIDER(css_provider),
-        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
-    );
+        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     builder = gtk_builder_new_from_file("src/glade/pt1.glade");
 
@@ -525,11 +567,19 @@ int main(int argc, char *argv[])
     resourceblockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "resourceblockStore"));
     runningStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "runningStore"));
 
-    //update_blockStore();
-    //update_processStore();
-    //update_readyStore();
-    //update_resourceblockStore();
-    //update_runningStore();
+    for (int i = 1; i <= 60; i++)
+    {
+        char box_name[20];
+        sprintf(box_name, "box%d", i);
+        memoryBoxes[i] = GTK_BOX(gtk_builder_get_object(builder, box_name));
+    }
+    context = gtk_widget_get_style_context(GTK_WIDGET(memoryBoxes[1]));
+
+    // update_blockStore();
+    // update_processStore();
+    // update_readyStore();
+    // update_resourceblockStore();
+    // update_runningStore();
 
     gtk_builder_connect_signals(builder, NULL);
 
@@ -541,4 +591,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

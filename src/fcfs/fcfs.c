@@ -105,6 +105,7 @@ void run_fcfs() {
         } else {
             printf("Process %d Finished\n", fcfs_running_process->pid);
             set_state(fcfs_running_process, "Terminated");
+            queue_dequeue(fcfs_process_queue);
             free_process(fcfs_running_process);
             fcfs_running_process = NULL;
         }

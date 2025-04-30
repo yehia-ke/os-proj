@@ -31,6 +31,7 @@ void run_rr() {
             printf("Process %d Finished\n", rr_running_process->pid);
             set_state(rr_running_process, "Terminated");
             free_process(rr_running_process);
+            queue_dequeue(rr_process_queue);
             rr_running_process = NULL;
             rr_time_slice = 0;
             return;
@@ -47,9 +48,12 @@ void run_rr() {
             printf("Quantum expired for process %d\n", rr_running_process->pid);
             set_state(rr_running_process, "Ready");
             queue_enqueue(rr_ready_queue, rr_running_process);
+            queue_dequeue(rr_process_queue);
+            queue_enqueue(rr_process_queue, rr_running_process);
             rr_running_process = NULL;
             rr_time_slice = 0;
         }
+        return; // Exit the function to avoid running the next process
     }
 
     // If no process is currently running
@@ -73,6 +77,8 @@ void run_rr() {
             // Time slice expired, move to the next queue
             set_state(rr_running_process, "Ready");
             queue_enqueue(rr_ready_queue, rr_running_process);
+            queue_dequeue(rr_process_queue);
+            queue_enqueue(rr_process_queue, rr_running_process);
             printf("Quantum expired for process %d\n", rr_running_process->pid);
             rr_running_process = NULL;
             rr_time_slice = 0;  // Reset time slice
@@ -82,8 +88,8 @@ void run_rr() {
         printf("No instruction to run... Terminating\n");
         set_state(rr_running_process, "Terminated"); // Set state to Terminated
         free_process(rr_running_process);
-        rr_running_process = NULL;
         queue_dequeue(rr_process_queue);
+        rr_running_process = NULL;
         return;
     }
 }
