@@ -158,7 +158,21 @@ Queue* rr_get_ready_queue() {
     return rr_ready_queue; // Return the process queue
 }
 Queue* rr_get_block_queue() {
-    return rr_process_queue; // Return the process queue
+    Queue* block_queue = queue_create();
+    for(int i=0; i<3; i++){
+        Queue* tmp = queue_create();
+        while(!queue_is_empty(rr_waiting_queue[i])){
+            PCB* process = queue_dequeue(rr_waiting_queue[i]);
+            queue_enqueue(tmp, process);
+        }
+        while(!queue_is_empty(tmp)){
+            PCB* process = queue_dequeue(tmp);
+            PCB* p1 = process;
+            queue_enqueue(rr_waiting_queue[i], process);
+            queue_enqueue(block_queue, p1);
+        }
+    }
+    return block_queue; // Return the process queue
 }
 Queue* rr_get_run_queue() {
     Queue* running = queue_create();

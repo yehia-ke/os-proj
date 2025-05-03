@@ -187,11 +187,39 @@ Queue* mlfq_get_process_queue()
 }
 Queue* mlfq_get_ready_queue()
 {
-    return mlfq_process_queue; // Return the highest priority queue
+    Queue* ready_queue = queue_create();
+    for(int i=0; i<4; i++){
+        Queue* tmp = queue_create();
+        while(!queue_is_empty(mlfq_ready_queue[i])){
+            PCB* process = queue_dequeue(mlfq_ready_queue[i]);
+            queue_enqueue(tmp, process);
+        }
+        while(!queue_is_empty(tmp)){
+            PCB* process = queue_dequeue(tmp);
+            PCB* p1 = process;
+            queue_enqueue(mlfq_ready_queue[i], process);
+            queue_enqueue(ready_queue, p1);
+        }
+    }
+    return ready_queue; // Return the process queue // Return the highest priority queue
 }
 Queue* mlfq_get_block_queue()
 {
-    return mlfq_process_queue; // Return the highest priority queue
+    Queue* block_queue = queue_create();
+    for(int i=0; i<3; i++){
+        Queue* tmp = queue_create();
+        while(!queue_is_empty(mlfq_waiting_queue[i])){
+            PCB* process = queue_dequeue(mlfq_waiting_queue[i]);
+            queue_enqueue(tmp, process);
+        }
+        while(!queue_is_empty(tmp)){
+            PCB* process = queue_dequeue(tmp);
+            PCB* p1 = process;
+            queue_enqueue(mlfq_waiting_queue[i], process);
+            queue_enqueue(block_queue, p1);
+        }
+    }
+    return block_queue; // Return the process queue
 }
 Queue* mlfq_get_run_queue()
 {
