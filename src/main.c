@@ -40,6 +40,37 @@ AutomaticClock *automaticClock = NULL;
 char *clocktype = NULL;
 process *tempp = NULL;
 
+GtkWidget *loading_window;
+
+gboolean perform_reset(gpointer data) {
+    // Restart the app
+    execl("./bin/program", "Fire Scheduler", NULL);
+
+    // If execl fails
+    perror("Failed to restart application");
+    exit(1);
+    return FALSE; // Stop the timeout
+}
+
+void reset_application() {
+    // Hide the main window
+    gtk_widget_hide(main_window);
+
+    // Create loading window
+    loading_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(loading_window), "Please wait...");
+    gtk_window_set_default_size(GTK_WINDOW(loading_window), 300, 100);
+    gtk_window_set_position(GTK_WINDOW(loading_window), GTK_WIN_POS_CENTER);
+
+    GtkWidget *label = gtk_label_new("Resetting application...");
+    gtk_container_add(GTK_CONTAINER(loading_window), label);
+    gtk_widget_show_all(loading_window);
+
+    // Wait 1 second, then perform reset
+    g_timeout_add(1000, perform_reset, NULL); // 1000 ms = 1 second
+}
+
+
 void update_gui();
 
 void printtogui(char *message)
@@ -582,6 +613,7 @@ void on_stop_clicked(GtkWidget *widget, gpointer data)
 void on_reset_clicked(GtkWidget *widget, gpointer data)
 {
     g_print("Reset Simulation clicked.\n");
+    reset_application();
 }
 
 void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)

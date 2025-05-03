@@ -208,14 +208,14 @@ Queue* mlfq_get_block_queue()
     Queue* block_queue = queue_create();
     for(int i=0; i<3; i++){
         Queue* tmp = queue_create();
-        while(!queue_is_empty(mlfq_waiting_queue[i])){
-            PCB* process = queue_dequeue(mlfq_waiting_queue[i]);
+        while(!pqueue_is_empty(mlfq_waiting_queue[i])){
+            PCB* process = pqueue_dequeue(mlfq_waiting_queue[i]);
             queue_enqueue(tmp, process);
         }
         while(!queue_is_empty(tmp)){
             PCB* process = queue_dequeue(tmp);
             PCB* p1 = process;
-            queue_enqueue(mlfq_waiting_queue[i], process);
+            pqueue_enqueue(mlfq_waiting_queue[i], process);
             queue_enqueue(block_queue, p1);
         }
     }
