@@ -185,3 +185,18 @@ Queue* mlfq_get_process_queue()
 {
     return mlfq_process_queue; // Return the highest priority queue
 }
+Queue* mlfq_get_ready_queue()
+{
+    return mlfq_process_queue; // Return the highest priority queue
+}
+Queue* mlfq_get_block_queue()
+{
+    return mlfq_process_queue; // Return the highest priority queue
+}
+Queue* mlfq_get_run_queue()
+{
+    Queue* running = queue_create();
+    queue_enqueue(running,mlfq_running_process);
+    
+    return running; // Return the highest priority queue
+}

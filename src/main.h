@@ -15,6 +15,7 @@
 #include "./memory/memory.h"
 #include <unistd.h>
 #include <glib.h>
+#include "./rr/rr.h"
 
 // Global variables for labels
 extern GtkWidget *processnumlabel;

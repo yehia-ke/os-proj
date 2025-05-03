@@ -111,7 +111,7 @@ void rr_wait(char mutex_name[]) {
         printf("Error: Unknown mutex name %s\n", mutex_name);
         return;
     }
-
+    show_error_message("process will be waiting inshallah");
     set_state(rr_running_process, "Waiting"); // Set the state to Waiting
     queue_enqueue(rr_waiting_queue[mutex_index], rr_running_process); // Enqueue the process in the waiting queue
     rr_running_process = NULL; // Clear the running process
@@ -154,5 +154,23 @@ void rr_signal(char mutex_name[]) {
 Queue* rr_get_process_queue() {
     return rr_process_queue; // Return the process queue
 }
+Queue* rr_get_ready_queue() {
+    return rr_ready_queue; // Return the process queue
+}
+Queue* rr_get_block_queue() {
+    return rr_process_queue; // Return the process queue
+}
+Queue* rr_get_run_queue() {
+    Queue* running = queue_create();
+    queue_enqueue(running,rr_running_process);
+    return running; // Return the process queue
+}
 
-
+void set_rr_quantum(int quanta){
+    char yarab[50];
+    char output[50] = "Selected Quanta: ";
+    rr_time_quantum = quanta;
+    sprintf(yarab, "%d", rr_time_quantum);
+    strcat(output, yarab);
+    show_error_message(output);
+}

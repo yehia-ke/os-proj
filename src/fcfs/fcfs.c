@@ -113,6 +113,16 @@ void run_fcfs() {
 }
 
 Queue* fcfs_get_process_queue() {
-    printf("Process Returned");
     return fcfs_process_queue;
+}
+Queue* fcfs_get_ready_queue() {
+    return fcfs_ready_queue;
+}
+Queue* fcfs_get_block_queue() {
+    return fcfs_process_queue;
+}
+Queue* fcfs_get_run_queue() {
+    Queue* running = queue_create();
+    queue_enqueue(running,fcfs_running_process);
+    return running;
 }

@@ -11,6 +11,8 @@ typedef struct {
     int pc;
     int mem_lower;
     int mem_upper;
+    int tiq;
+    int tiqblock;
 } PCB;
 
 PCB* create_process(int pid, char* program_file);

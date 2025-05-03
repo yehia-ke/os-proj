@@ -29,6 +29,7 @@ PCB* create_process(int pid, char* program_file) {
     int mem_upper = mem_lower + total_words - 1;
 
     char temp[200];
+    int tiq = 0;
 
     sprintf(temp, "PCB_PID:%d", pid);
     set_memory_word(mem_lower, temp);
@@ -72,6 +73,8 @@ PCB* create_process(int pid, char* program_file) {
     pcb->pc = 0;
     pcb->mem_lower = mem_lower;
     pcb->mem_upper = mem_upper;
+    pcb->tiq = tiq;
+    pcb->tiqblock = tiq;
     printf("7");
     printf("Process %d created at memory [%d, %d]\n", pid, mem_lower, mem_upper);
     return pcb;

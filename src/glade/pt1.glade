@@ -230,7 +230,7 @@
               <object class="GtkLabel" id="schedulerlabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Active Scheduling Algorithm: 0</property>
+                <property name="label" translatable="yes">Active Scheduling Algorithm: NONE</property>
                 <attributes>
                   <attribute name="scale" value="1.25"/>
                 </attributes>
@@ -653,7 +653,7 @@
               </object>
               <packing>
                 <property name="name">Run Tree</property>
-                <property name="title" translatable="yes">Running Queue</property>
+                <property name="title" translatable="yes">Running Process</property>
                 <property name="position">2</property>
               </packing>
             </child>

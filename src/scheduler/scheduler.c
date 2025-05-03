@@ -121,3 +121,69 @@ Queue* get_process_queue() {
         printf("yes");
     }
 }
+
+Queue* get_ready_queue(){
+    if (current_scheduler == NULL) {
+        printf("No scheduler set.\n");
+        return NULL;
+    }
+    if (strcmp(current_scheduler, "fcfs") == 0) {
+        printf("fcfs");
+        return fcfs_get_ready_queue();
+        
+    } else if (strcmp(current_scheduler, "rr") == 0) {
+        printf("rr");
+        return rr_get_ready_queue();
+    }
+    else if (strcmp(current_scheduler, "mlfq") == 0) {
+        printf("mlfq");
+        return mlfq_get_ready_queue();
+    }
+    else{
+        printf("yes");
+    }
+}
+
+Queue* get_block_queue(){
+    if (current_scheduler == NULL) {
+        printf("No scheduler set.\n");
+        return NULL;
+    }
+    if (strcmp(current_scheduler, "fcfs") == 0) {
+        printf("fcfs");
+        return fcfs_get_block_queue();
+        
+    } else if (strcmp(current_scheduler, "rr") == 0) {
+        printf("rr");
+        return rr_get_block_queue();
+    }
+    else if (strcmp(current_scheduler, "mlfq") == 0) {
+        printf("mlfq");
+        return mlfq_get_block_queue();
+    }
+    else{
+        printf("yes");
+    }
+}
+
+Queue* get_run_queue(){
+    if (current_scheduler == NULL) {
+        printf("No scheduler set.\n");
+        return NULL;
+    }
+    if (strcmp(current_scheduler, "fcfs") == 0) {
+        printf("fcfs");
+        return fcfs_get_run_queue();
+        
+    } else if (strcmp(current_scheduler, "rr") == 0) {
+        printf("rr");
+        return rr_get_run_queue();
+    }
+    else if (strcmp(current_scheduler, "mlfq") == 0) {
+        printf("mlfq");
+        return mlfq_get_run_queue();
+    }
+    else{
+        printf("yes");
+    }
+}

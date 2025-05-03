@@ -50,11 +50,6 @@ void printtogui(char *message)
 PCB *load_program(const char *filepath, int pid)
 {
     PCB *process = create_process(pid, (char *)filepath);
-    if (!process)
-    {
-        show_error_message("Process creation failed.");
-        exit(1);
-    }
     return process;
 }
 
@@ -67,9 +62,16 @@ void checkArrivalTime()
         if ((p->arrival_time == AutomaticClock_getCycle(automaticClock)) || (p->arrival_time == ManualClock_getCycle(manualClock)))
         {
             PCB *hello = load_program(p->path, pid);
+            char output[50];
+            sprintf(output, "PID %d failed to be created", pid);
+            if(!hello){
+                show_error_message(output);
+            }
+            else{
             pid++;
             add_process_to_scheduler(hello);
             g_print(hello->state);
+        }
         }
         else
         {
@@ -197,6 +199,17 @@ static void update_memoryAndProcessStore()
             strcat(mem_lower, " - ");
             strcat(mem_lower, mem_upper);
             gtk_tree_store_set(processStore, &iter, 0, pid, 1, process->state, 2, priority, 3, mem_lower, 4, pc, -1);
+            // if(strcmp(process->state,"Ready")){
+            //     process->tiq++;
+            // }
+            // if(strcmp(process->state,"Waiting")){
+            //     process->tiqblock++;
+            // }
+            // char l[50] = "Process time in queue: ";
+            // char lx[50];
+            // sprintf(lx, "%d", process->tiq);
+            // strcat(l, lx);
+            // g_print(l);
 
             // Update the memory grid
             for (int i = process->mem_lower; i <= process->mem_upper; i++)
@@ -317,12 +330,51 @@ static void clear_memoryBoxes()
 static void update_readyStore()
 {
     gtk_tree_store_clear(readyStore);
-    GtkTreeIter iter;
-    gtk_tree_store_append(readyStore, &iter, NULL);
-    gtk_tree_store_set(readyStore, &iter, 0, "Ready PID 1", 1, "Ready Inst 1", 2, "Ready Time 1", -1);
 
-    gtk_tree_store_append(readyStore, &iter, NULL);
-    gtk_tree_store_set(readyStore, &iter, 0, "Ready PID 2", 1, "Ready Inst 2", 2, "Ready Time 2", -1);
+    Queue *queue = get_process_queue();
+    if (!queue || queue_is_empty(queue))
+    {
+        g_print("Process Queue Empty");
+        return;
+    }
+
+    Queue *temp_queue = queue_create();
+
+    while (!queue_is_empty(queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(queue);
+        if (process)
+        {
+            GtkTreeIter iter;
+            gtk_tree_store_append(processStore, &iter, NULL);
+            char pid[20];
+            sprintf(pid, "%d", process->pid);
+            char priority[20];
+            sprintf(priority, "%d", process->priority);
+            char mem_lower[20];
+            sprintf(mem_lower, "%d", process->mem_lower);
+            char mem_upper[20];
+            sprintf(mem_upper, "%d", process->mem_upper);
+            char pc[20];
+            sprintf(pc, "%d", process->pc);
+            strcat(mem_lower, " - ");
+            strcat(mem_lower, mem_upper);
+            gtk_tree_store_set(processStore, &iter, 0, pid, 1, process->state, 2, priority, 3, mem_lower, 4, pc, -1);
+            queue_enqueue(temp_queue, process);
+        }
+        else
+        {
+            g_print("Process is NULL\n");
+        }
+    }
+
+    while (!queue_is_empty(temp_queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(temp_queue);
+        queue_enqueue(queue, process);
+    }
+
+    queue_destroy(temp_queue);
 }
 
 static void update_resourceblockStore()
@@ -348,9 +400,14 @@ static void update_runningStore()
 }
 
 // Functions to set labels
-void set_processnumlabel(const char *text)
+void set_processnumlabel()
 {
-    gtk_label_set_text(GTK_LABEL(processnumlabel), text);
+    char processnum[50];
+    int processnumber = queue_size(get_process_queue());
+    sprintf(processnum, "%d", processnumber);
+    char final[50] = "Number of Processes: ";
+    strcat(final, processnum);
+    gtk_label_set_text(GTK_LABEL(processnumlabel), final);
 }
 
 void set_clocklabel(const char *text)
@@ -480,11 +537,15 @@ void on_rr_activate(GtkWidget *widget, gpointer data)
 {
     if (clocktype == NULL)
     {
-        g_print("Round Robin Selected.\n");
+        char* quanta = show_text_entry_popup("Please input time quantum");
+        int quantum = atoi(quanta);
+        set_rr_quantum(quantum);
         set_scheduler("rr");
         cscheduler = "rr";
+        g_print("Round Robin Selected.\n");
         set_schedulerlabel("Active Scheduler: RR");
         show_error_message("Round Robin Selected.");
+        g_print("Round Robin Selected.\n");
     }
     else
     {
@@ -610,9 +671,10 @@ void update_gui()
     update_blockStore();
     clear_memoryBoxes();
     update_memoryAndProcessStore();
-    update_readyStore();
+    //update_readyStore();
     update_resourceblockStore();
     update_runningStore();
+    set_processnumlabel();
 }
 
 int main(int argc, char *argv[])
