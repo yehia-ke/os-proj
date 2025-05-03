@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -I. `pkg-config --cflags gtk+-3.0` -rdynamic
+CFLAGS = -Wall -Wextra -g -I. `pkg-config --cflags gtk+-3.0` -rdynamic
 LDFLAGS = `pkg-config --libs gtk+-3.0`
 
 # Directories
@@ -36,4 +36,8 @@ clean:
 run: $(TARGET)
 	./$(TARGET)
 
-.PHONY: all clean run
+# Debug the program with GDB
+debug: $(TARGET)
+	gdb $(TARGET)
+
+.PHONY: all clean run debug
