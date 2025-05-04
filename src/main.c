@@ -230,17 +230,6 @@ static void update_memoryAndProcessStore()
             strcat(mem_lower, " - ");
             strcat(mem_lower, mem_upper);
             gtk_tree_store_set(processStore, &iter, 0, pid, 1, process->state, 2, priority, 3, mem_lower, 4, pc, -1);
-            // if(strcmp(process->state,"Ready")){
-            //     process->tiq++;
-            // }
-            // if(strcmp(process->state,"Waiting")){
-            //     process->tiqblock++;
-            // }
-            // char l[50] = "Process time in queue: ";
-            // char lx[50];
-            // sprintf(lx, "%d", process->tiq);
-            // strcat(l, lx);
-            // g_print(l);
 
             // Update the memory grid
             for (int i = process->mem_lower; i <= process->mem_upper; i++)
@@ -362,7 +351,7 @@ static void update_readyStore()
 {
     gtk_tree_store_clear(readyStore);
 
-    Queue *queue = get_process_queue();
+    Queue *queue = get_ready_queue();
     if (!queue || queue_is_empty(queue))
     {
         g_print("Process Queue Empty");
@@ -377,20 +366,13 @@ static void update_readyStore()
         if (process)
         {
             GtkTreeIter iter;
-            gtk_tree_store_append(processStore, &iter, NULL);
+            gtk_tree_store_append(readyStore, &iter, NULL);
             char pid[20];
             sprintf(pid, "%d", process->pid);
-            char priority[20];
-            sprintf(priority, "%d", process->priority);
-            char mem_lower[20];
-            sprintf(mem_lower, "%d", process->mem_lower);
-            char mem_upper[20];
-            sprintf(mem_upper, "%d", process->mem_upper);
-            char pc[20];
-            sprintf(pc, "%d", process->pc);
-            strcat(mem_lower, " - ");
-            strcat(mem_lower, mem_upper);
-            gtk_tree_store_set(processStore, &iter, 0, pid, 1, process->state, 2, priority, 3, mem_lower, 4, pc, -1);
+            char tiq[20];
+            sprintf(tiq, "%d", process->tiq);
+
+            gtk_tree_store_set(readyStore, &iter, 0, pid, 1, get_instruction(process), 2, tiq, -1);
             queue_enqueue(temp_queue, process);
         }
         else
@@ -703,7 +685,7 @@ void update_gui()
     update_blockStore();
     clear_memoryBoxes();
     update_memoryAndProcessStore();
-    //update_readyStore();
+    update_readyStore();
     update_resourceblockStore();
     update_runningStore();
     set_processnumlabel();

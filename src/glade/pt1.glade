@@ -597,7 +597,7 @@
                   <object class="GtkTreeView" id="runTree1">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="model">readyStore</property>
+                    <property name="model">runningStore</property>
                     <property name="headers-clickable">False</property>
                     <property name="enable-search">False</property>
                     <property name="search-column">0</property>
