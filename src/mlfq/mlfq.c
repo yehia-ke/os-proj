@@ -51,6 +51,10 @@ void mlfq_wait(char mutex_name[])
     }
 
     set_state(mlfq_running_process, "Waiting");                            // Set the state to Waiting
+    if(time_slice >= time_quantum[mlfq_running_process->priority - 1])
+    {
+        set_priority(mlfq_running_process, mlfq_running_process->priority + 1); // Decrease the priority
+    }
     pqueue_enqueue(mlfq_waiting_queue[mutex_index], mlfq_running_process); // Enqueue the process in the waiting queue
     mlfq_running_process = NULL;                                           // Clear the running process
     time_slice = 0;                                                        // Reset the time slice
