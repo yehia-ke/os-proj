@@ -127,10 +127,10 @@ void *non_blocking_loop(void *arg)
         checkArrivalTime(); // Infinite loop
         run_scheduler();
         AutomaticClock_update(automaticClock);
-        update_gui();
+        g_idle_add((GSourceFunc)update_gui, NULL);
         // sleep(1); // Sleep for 1 second to avoid excessive CPU usage
         g_print("Automatic Clock updated.\n");
-        usleep(1000 * 1000);
+        usleep(1500 * 1000);
     }
     return NULL;
 }
