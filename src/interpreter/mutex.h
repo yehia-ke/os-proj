@@ -15,5 +15,6 @@ extern Mutex userOutput;
 extern Mutex file;
 
 int is_owner(Mutex* mutex, PCB* pcb);
+const char* getMutex(int i);
 
 #endif 

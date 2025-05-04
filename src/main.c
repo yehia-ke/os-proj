@@ -6,6 +6,7 @@
 #include "./queue/queue.h"
 #include "pcb/pcb.h"
 #include "interpreter/interpreter.h"
+#include "interpreter/mutex.h"
 #include "scheduler/scheduler.h"
 #include "AutomaticClock/AutomaticClock.h"
 #include "ManualClock/ManualClock.h"
@@ -191,12 +192,44 @@ static void redirect_console_to_text_view(GtkWidget *log_text_view)
 static void update_blockStore()
 {
     gtk_tree_store_clear(blockStore);
-    GtkTreeIter iter;
-    gtk_tree_store_append(blockStore, &iter, NULL);
-    gtk_tree_store_set(blockStore, &iter, 0, "Block PID 1", 1, "Block Inst 1", 2, "Block Time 1", -1);
 
-    gtk_tree_store_append(blockStore, &iter, NULL);
-    gtk_tree_store_set(blockStore, &iter, 0, "Block PID 2", 1, "Block Inst 2", 2, "Block Time 2", -1);
+    Queue *queue = get_block_queue();
+    if (!queue || queue_is_empty(queue))
+    {
+        g_print("Process Queue Empty");
+        return;
+    }
+
+    Queue *temp_queue = queue_create();
+
+    while (!queue_is_empty(queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(queue);
+        if (process)
+        {
+            GtkTreeIter iter;
+            gtk_tree_store_append(blockStore, &iter, NULL);
+            char pid[20];
+            sprintf(pid, "%d", process->pid);
+            char tiq[20];
+            sprintf(tiq, "%d", process->tiq);
+
+            gtk_tree_store_set(blockStore, &iter, 0, pid, 1, get_instruction(process), 2, tiq, -1);
+            queue_enqueue(temp_queue, process);
+        }
+        else
+        {
+            g_print("Process is NULL\n");
+        }
+    }
+
+    while (!queue_is_empty(temp_queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(temp_queue);
+        queue_enqueue(queue, process);
+    }
+
+    queue_destroy(temp_queue);
 }
 
 static void update_memoryAndProcessStore()
@@ -395,23 +428,87 @@ static void update_readyStore()
 static void update_resourceblockStore()
 {
     gtk_tree_store_clear(resourceblockStore);
-    GtkTreeIter iter;
-    gtk_tree_store_append(resourceblockStore, &iter, NULL);
-    gtk_tree_store_set(resourceblockStore, &iter, 0, "Resource PID 1", 1, "Priority 1", -1);
 
-    gtk_tree_store_append(resourceblockStore, &iter, NULL);
-    gtk_tree_store_set(resourceblockStore, &iter, 0, "Resource PID 2", 1, "Priority 2", -1);
+    Queue *queue = get_block_queue();
+    if (!queue || queue_is_empty(queue))
+    {
+        g_print("Process Queue Empty");
+        return;
+    }
+
+    Queue *temp_queue = queue_create();
+
+    while (!queue_is_empty(queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(queue);
+        if (process)
+        {
+            GtkTreeIter iter;
+            gtk_tree_store_append(resourceblockStore, &iter, NULL);
+            char pid[20];
+            sprintf(pid, "%d", process->pid);
+            char priority[20];
+            sprintf(priority, "%d", process->priority);
+
+            gtk_tree_store_set(resourceblockStore, &iter, 0, pid, 1,priority, -1);
+            queue_enqueue(temp_queue, process);
+        }
+        else
+        {
+            g_print("Process is NULL\n");
+        }
+    }
+
+    while (!queue_is_empty(temp_queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(temp_queue);
+        queue_enqueue(queue, process);
+    }
+
+    queue_destroy(temp_queue);
 }
 
 static void update_runningStore()
 {
     gtk_tree_store_clear(runningStore);
-    GtkTreeIter iter;
-    gtk_tree_store_append(runningStore, &iter, NULL);
-    gtk_tree_store_set(runningStore, &iter, 0, "Running PID 1", 1, "Running Inst 1", 2, "Running Time 1", -1);
 
-    gtk_tree_store_append(runningStore, &iter, NULL);
-    gtk_tree_store_set(runningStore, &iter, 0, "Running PID 2", 1, "Running Inst 2", 2, "Running Time 2", -1);
+    Queue *queue = get_run_queue();
+    if (!queue || queue_is_empty(queue))
+    {
+        g_print("Process Queue Empty");
+        return;
+    }
+
+    Queue *temp_queue = queue_create();
+
+    while (!queue_is_empty(queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(queue);
+        if (process)
+        {
+            GtkTreeIter iter;
+            gtk_tree_store_append(runningStore, &iter, NULL);
+            char pid[20];
+            sprintf(pid, "%d", process->pid);
+            char tiq[20];
+            sprintf(tiq, "%d", process->tiq);
+
+            gtk_tree_store_set(runningStore, &iter, 0, pid, 1, get_instruction(process), 2, tiq, -1);
+            queue_enqueue(temp_queue, process);
+        }
+        else
+        {
+            g_print("Process is NULL\n");
+        }
+    }
+
+    while (!queue_is_empty(temp_queue))
+    {
+        PCB *process = (PCB *)queue_dequeue(temp_queue);
+        queue_enqueue(queue, process);
+    }
+
+    queue_destroy(temp_queue);
 }
 
 // Functions to set labels
@@ -435,18 +532,43 @@ void set_schedulerlabel(const char *text)
     gtk_label_set_text(GTK_LABEL(schedulerlabel), text);
 }
 
-void set_userInputMutex(const char *text)
+void set_userInputMutex()
 {
+    char text[50] = "UserInput: Process ";
+    char *mutex = getMutex(0);
+    if(strcmp(mutex,"")){
+        strcat(text, mutex);
+    }
+    else{
+        strcat(text, "NONE");
+    }
     gtk_label_set_text(GTK_LABEL(userInputMutex), text);
 }
 
-void set_userOutputMutex(const char *text)
+void set_userOutputMutex()
 {
+    char text[50] = "UserOutput: Process ";
+    char *mutex = getMutex(1);
+    if(strcmp(mutex,"")){
+        strcat(text, mutex);
+    }
+    else{
+        strcat(text, "NONE");
+    }
+    
     gtk_label_set_text(GTK_LABEL(userOutputMutex), text);
 }
 
-void set_fileMutex(const char *text)
+void set_fileMutex()
 {
+    char text[50] = "File: Process ";
+    char *mutex = getMutex(2);
+    if(strcmp(mutex,"")){
+        strcat(text, mutex);
+    }
+    else{
+        strcat(text, "NONE");
+    }
     gtk_label_set_text(GTK_LABEL(fileMutex), text);
 }
 
@@ -594,6 +716,7 @@ void on_stop_clicked(GtkWidget *widget, gpointer data)
 {
     g_print("Stop Simulation clicked.\n");
 }
+
 void on_reset_clicked(GtkWidget *widget, gpointer data)
 {
     g_print("Reset Simulation clicked.\n");
@@ -692,6 +815,9 @@ void update_gui()
     update_resourceblockStore();
     update_runningStore();
     set_processnumlabel();
+    set_userInputMutex();
+    set_userOutputMutex();
+    set_fileMutex();
 }
 
 int main(int argc, char *argv[])

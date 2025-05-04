@@ -27,3 +27,16 @@ int is_owner(Mutex* mutex, PCB* pcb) {
     // Otherwise, the PCB is not the owner
     return 0;
 }
+
+const char* getMutex(int i) {
+    switch (i) {
+        case 0:
+            return userInput.owner;
+        case 1:
+            return userOutput.owner;
+        case 2:
+            return file.owner;
+        default:
+            return "Invalid mutex index"; // Return error message for invalid index
+    }
+}

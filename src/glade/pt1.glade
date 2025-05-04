@@ -737,7 +737,7 @@
                       <object class="GtkLabel" id="userInputMutex">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">userInput: Process NULL</property>
+                        <property name="label" translatable="yes">userInput: Process NONE</property>
                         <attributes>
                           <attribute name="scale" value="1.5"/>
                         </attributes>
@@ -751,7 +751,7 @@
                       <object class="GtkLabel" id="userOutputMutex">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">userOutput: Process NULL</property>
+                        <property name="label" translatable="yes">userOutput: Process NONE</property>
                         <attributes>
                           <attribute name="scale" value="1.5"/>
                         </attributes>
@@ -765,7 +765,7 @@
                       <object class="GtkLabel" id="fileMutex">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">file: Process NULL</property>
+                        <property name="label" translatable="yes">file: Process NONE</property>
                         <attributes>
                           <attribute name="scale" value="1.5"/>
                         </attributes>
