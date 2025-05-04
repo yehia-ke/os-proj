@@ -123,7 +123,6 @@ void run_mlfq()
 
         if (!mlfq_running_process) // Checks if the process has been blocked by a mutex
         {
-            show_error_message("Process has been blocked by a mutex");
             time_slice = 0; // Reset time slice
             return;
         }
@@ -193,7 +192,6 @@ void run_mlfq()
 
         if (!mlfq_running_process) // Checks if the process has been blocked by a mutex
         {
-            show_error_message("Process has been blocked by a mutex");
             time_slice = 0; // Reset time slice
             return;
         }
