@@ -8,6 +8,7 @@
 #include "../interpreter/interpreter.h"
 #include "../interpreter/mutex.h"
 #include "../pqueue/pqueue.h"
+#include "../error/error.h"
 
 void initialize_mlfq();
 void run_mlfq();

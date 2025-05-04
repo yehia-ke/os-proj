@@ -71,6 +71,7 @@ void run_rr() {
         printf("Process %d running: %s\n", rr_running_process->pid, instruction);
         increment_pc(rr_running_process);
         rr_time_slice++;
+
         execute_instruction(instruction, rr_running_process);  // Execute the instruction
 
         if(rr_time_slice >= rr_time_quantum) {
@@ -111,10 +112,10 @@ void rr_wait(char mutex_name[]) {
         printf("Error: Unknown mutex name %s\n", mutex_name);
         return;
     }
-    show_error_message("process will be waiting inshallah");
     set_state(rr_running_process, "Waiting"); // Set the state to Waiting
     queue_enqueue(rr_waiting_queue[mutex_index], rr_running_process); // Enqueue the process in the waiting queue
     rr_running_process = NULL; // Clear the running process
+    rr_time_slice = 0; // Reset the time slice
 }
 
 void rr_signal(char mutex_name[]) {

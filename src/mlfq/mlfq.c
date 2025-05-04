@@ -6,8 +6,6 @@ Queue* mlfq_ready_queue[4];  // Array of queues for each priority level
 PQueue* mlfq_waiting_queue[3]; // Array of queues for processes waiting for mutex variable i
 int time_quantum[4] = {1, 2, 4, 8};  // Time quantum for each priority level
 
-Queue* mlfq_process_queue = NULL;
-
 int time_slice = 0;  // Time slice counter
 
 void initialize_mlfq() {
@@ -18,13 +16,11 @@ void initialize_mlfq() {
         }
         mlfq_ready_queue[i] = queue_create();  // Initialize each priority queue
     }
-    mlfq_process_queue = queue_create(); // Initialize the process queue
 }
 
 void mlfq_add_process(PCB* process) {
     // Add the process to the highest priority queue (0)
     queue_enqueue(mlfq_ready_queue[0], process);
-    queue_enqueue(mlfq_process_queue, process); // Add to the process queue
 }
 
 void mlfq_wait(char mutex_name[]) {
@@ -45,9 +41,12 @@ void mlfq_wait(char mutex_name[]) {
         return;
     }
 
+    show_error_message("nigga");
+
     set_state(mlfq_running_process, "Waiting"); // Set the state to Waiting
     pqueue_enqueue(mlfq_waiting_queue[mutex_index], mlfq_running_process); // Enqueue the process in the waiting queue
     mlfq_running_process = NULL; // Clear the running process
+    time_slice = 0; // Reset the time slice
 }
 
 void mlfq_signal(char mutex_name[]) {
@@ -95,12 +94,14 @@ void run_mlfq() {
             set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
             free_process(mlfq_running_process);
             mlfq_running_process = NULL;
+            time_slice = 0;  // Reset time slice
             return;
         } else {
             // If there's still an instruction, return it and increment PC
             printf("Process %d running: %s\n", mlfq_running_process->pid, instruction);
             increment_pc(mlfq_running_process);
             time_slice++;
+            show_error_message(instruction);
             execute_instruction(instruction, mlfq_running_process);  // Execute the instruction
 
             if(time_slice >= time_quantum[mlfq_running_process->priority - 1]) {
@@ -153,6 +154,7 @@ void run_mlfq() {
         printf("Process %d running: %s\n", mlfq_running_process->pid, instruction);
         increment_pc(mlfq_running_process);
         time_slice++;
+        show_error_message(instruction);
         execute_instruction(instruction, mlfq_running_process);  // Execute the instruction
 
         if(time_slice >= time_quantum[mlfq_running_process->priority - 1]) {
@@ -176,14 +178,46 @@ void run_mlfq() {
         set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
         free_process(mlfq_running_process);
         mlfq_running_process = NULL;
-        queue_dequeue(mlfq_process_queue);
+        time_slice = 0;
         return;
     }
 }
 
 Queue* mlfq_get_process_queue()
 {
-    return mlfq_process_queue; // Return the highest priority queue
+    Queue* process_queue = queue_create();
+    if(mlfq_running_process != NULL) {
+        queue_enqueue(process_queue, mlfq_running_process);
+    }
+    for(int i=0; i<4; i++){
+        Queue* tmp = queue_create();
+        while(!queue_is_empty(mlfq_ready_queue[i])){
+            PCB* process = queue_dequeue(mlfq_ready_queue[i]);
+            queue_enqueue(tmp, process);
+        }
+        while(!queue_is_empty(tmp)){
+            PCB* process = queue_dequeue(tmp);
+            PCB* p1 = process;
+            queue_enqueue(mlfq_ready_queue[i], process);
+            queue_enqueue(process_queue, p1);
+        }
+    }
+
+    for(int i=0; i<3; i++){
+        Queue* tmp = queue_create();
+        while(!pqueue_is_empty(mlfq_waiting_queue[i])){
+            PCB* process = pqueue_dequeue(mlfq_waiting_queue[i]);
+            queue_enqueue(tmp, process);
+        }
+        while(!queue_is_empty(tmp)){
+            PCB* process = queue_dequeue(tmp);
+            PCB* p1 = process;
+            pqueue_enqueue(mlfq_waiting_queue[i], process);
+            queue_enqueue(process_queue, p1);
+        }
+    }
+
+    return process_queue; // Return the process queue
 }
 Queue* mlfq_get_ready_queue()
 {
