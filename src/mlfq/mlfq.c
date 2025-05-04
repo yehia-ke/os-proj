@@ -66,18 +66,21 @@ void mlfq_signal(char mutex_name[]) {
 
     char tmp[50];
 
+    char *mutex_owner = getMutex(mutex_index);
+
     if(mlfq_waiting_queue[mutex_index] == NULL || pqueue_is_empty(mlfq_waiting_queue[mutex_index])) {
         printf("No processes waiting on mutex %s\n", mutex_name);
-        strcpy(mutex_name, ""); // Clear the mutex name
+        strcpy(mutex_owner, ""); // Clear the mutex name
         return;
     }
 
+    show_error_message(mutex_owner);
 
     PCB* waiting_process = (PCB*)pqueue_dequeue(mlfq_waiting_queue[mutex_index]); // Dequeue the first waiting process
     // Enqueue it in its respective priority queue
     queue_enqueue(mlfq_ready_queue[waiting_process->priority - 1], waiting_process);
     sprintf(tmp, "%d", waiting_process->pid);
-    strcpy(mutex_name, tmp); // Copy the process ID to the mutex name
+    strcpy(mutex_owner, tmp); // Copy the process ID to the mutex name
     set_state(waiting_process, "Ready"); // Set its state to Ready
 }
 

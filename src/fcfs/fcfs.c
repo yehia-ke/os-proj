@@ -60,9 +60,11 @@ void fcfs_signal(char mutex_name[]) {
 
     char tmp[50];
 
+    char *mutex_owner = getMutex(mutex_index);
+
     if(fcfs_waiting_queue[mutex_index] == NULL || queue_is_empty(fcfs_waiting_queue[mutex_index])) {
         printf("No processes waiting on mutex %s\n", mutex_name);
-        strcpy(mutex_name, ""); // Clear the mutex name
+        strcpy(mutex_owner, ""); // Clear the mutex name
         return;
     }
 
@@ -71,7 +73,7 @@ void fcfs_signal(char mutex_name[]) {
     // Enqueue it in its respective priority queue
     queue_enqueue(fcfs_ready_queue, waiting_process);
     sprintf(tmp, "%d", waiting_process->pid);
-    strcpy(mutex_name, tmp); // Copy the process ID to the mutex name
+    strcpy(mutex_owner, tmp); // Copy the process ID to the mutex name
     set_state(waiting_process, "Ready"); // Set its state to Ready
 }
 
