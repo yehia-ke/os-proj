@@ -90,8 +90,6 @@ void mlfq_signal(char mutex_name[])
         return;
     }
 
-    show_error_message(mutex_owner);
-
     PCB *waiting_process = (PCB *)pqueue_dequeue(mlfq_waiting_queue[mutex_index]); // Dequeue the first waiting process
     // Enqueue it in its respective priority queue
     queue_enqueue(mlfq_ready_queue[waiting_process->priority - 1], waiting_process);
