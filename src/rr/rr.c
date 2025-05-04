@@ -5,21 +5,18 @@ PCB* rr_running_process = NULL;   // Pointer to the currently running process
 Queue* rr_ready_queue = NULL;     // Queue for ready processes
 Queue* rr_waiting_queue[3];   // Queue for waiting processes
 int rr_time_quantum = 2;          // Default time quantum
-int rr_time_slice = 0;   
-Queue* rr_process_queue = NULL;         // Time slice counter
+int rr_time_slice = 0;
 
 void initialize_rr() {
     rr_ready_queue = queue_create();  // Initialize the ready queue
     for (int i = 0; i < 3; i++) {
         rr_waiting_queue[i] = queue_create(); // Initialize each waiting queue
     }
-    rr_process_queue = queue_create(); // Initialize the process queue
 }
 
 void rr_add_process(PCB* process) {
     set_state(process, "Ready");
     queue_enqueue(rr_ready_queue, process);
-    queue_enqueue(rr_process_queue, process); // Add to the process queue
 }
 
 void run_rr() {
@@ -31,7 +28,6 @@ void run_rr() {
             printf("Process %d Finished\n", rr_running_process->pid);
             set_state(rr_running_process, "Terminated");
             free_process(rr_running_process);
-            queue_dequeue(rr_process_queue);
             rr_running_process = NULL;
             rr_time_slice = 0;
             return;
@@ -48,8 +44,6 @@ void run_rr() {
             printf("Quantum expired for process %d\n", rr_running_process->pid);
             set_state(rr_running_process, "Ready");
             queue_enqueue(rr_ready_queue, rr_running_process);
-            queue_dequeue(rr_process_queue);
-            queue_enqueue(rr_process_queue, rr_running_process);
             rr_running_process = NULL;
             rr_time_slice = 0;
         }
@@ -78,8 +72,6 @@ void run_rr() {
             // Time slice expired, move to the next queue
             set_state(rr_running_process, "Ready");
             queue_enqueue(rr_ready_queue, rr_running_process);
-            queue_dequeue(rr_process_queue);
-            queue_enqueue(rr_process_queue, rr_running_process);
             printf("Quantum expired for process %d\n", rr_running_process->pid);
             rr_running_process = NULL;
             rr_time_slice = 0;  // Reset time slice
@@ -89,8 +81,8 @@ void run_rr() {
         printf("No instruction to run... Terminating\n");
         set_state(rr_running_process, "Terminated"); // Set state to Terminated
         free_process(rr_running_process);
-        queue_dequeue(rr_process_queue);
         rr_running_process = NULL;
+        rr_time_slice = 0;
         return;
     }
 }
@@ -145,15 +137,47 @@ void rr_signal(char mutex_name[]) {
 
 
     PCB* waiting_process = (PCB*)queue_dequeue(rr_waiting_queue[mutex_index]); // Dequeue the first waiting process
+    set_state(waiting_process, "Ready"); // Set its state to Ready
     // Enqueue it in its respective priority queue
     queue_enqueue(rr_ready_queue, waiting_process);
     sprintf(tmp, "%d", waiting_process->pid);
     strcpy(mutex_name, tmp); // Copy the process ID to the mutex name
-    set_state(waiting_process, "Ready"); // Set its state to Ready
 }
 
 Queue* rr_get_process_queue() {
-    return rr_process_queue; // Return the process queue
+    Queue* process_queue = queue_create();
+    if(rr_running_process != NULL) {
+        queue_enqueue(process_queue, rr_running_process);
+    }
+    Queue* tmp = queue_create();
+    while(!queue_is_empty(rr_ready_queue)){
+        PCB* process = queue_dequeue(rr_ready_queue);
+        process->tiq++;
+        queue_enqueue(tmp, process);
+    }
+    while(!queue_is_empty(tmp)){
+        PCB* process = queue_dequeue(tmp);
+        PCB* p1 = process;
+        queue_enqueue(rr_ready_queue, process);
+        queue_enqueue(process_queue, p1);
+    }
+
+    for(int i=0; i<3; i++){
+        Queue* tmp = queue_create();
+        while(!queue_is_empty(rr_waiting_queue[i])){
+            PCB* process = queue_dequeue(rr_waiting_queue[i]);
+            process->tiqblock++;
+            queue_enqueue(tmp, process);
+        }
+        while(!queue_is_empty(tmp)){
+            PCB* process = queue_dequeue(tmp);
+            PCB* p1 = process;
+            queue_enqueue(rr_waiting_queue[i], process);
+            queue_enqueue(process_queue, p1);
+        }
+    }
+
+    return process_queue; // Return the process queue
 }
 Queue* rr_get_ready_queue() {
     return rr_ready_queue; // Return the process queue

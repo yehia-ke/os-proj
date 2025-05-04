@@ -113,7 +113,39 @@ void run_fcfs() {
 }
 
 Queue* fcfs_get_process_queue() {
-    return fcfs_process_queue;
+    Queue* process_queue = queue_create();
+    if (fcfs_running_process != NULL) {
+        queue_enqueue(process_queue, fcfs_running_process);
+    }
+    Queue* tmp = queue_create();
+    while (!queue_is_empty(fcfs_ready_queue)) {
+        PCB* process = queue_dequeue(fcfs_ready_queue);
+        process->tiq++;
+        queue_enqueue(tmp, process);
+    }
+    while (!queue_is_empty(tmp)) {
+        PCB* process = queue_dequeue(tmp);
+        PCB* p1 = process;
+        queue_enqueue(fcfs_ready_queue, process);
+        queue_enqueue(process_queue, p1);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        Queue* tmp = queue_create();
+        while (!queue_is_empty(fcfs_waiting_queue[i])) {
+            PCB* process = queue_dequeue(fcfs_waiting_queue[i]);
+            process->tiqblock++;
+            queue_enqueue(tmp, process);
+        }
+        while (!queue_is_empty(tmp)) {
+            PCB* process = queue_dequeue(tmp);
+            PCB* p1 = process;
+            queue_enqueue(fcfs_waiting_queue[i], process);
+            queue_enqueue(process_queue, p1);
+        }
+    }
+
+    return process_queue; // Return the process queue
 }
 Queue* fcfs_get_ready_queue() {
     return fcfs_ready_queue;

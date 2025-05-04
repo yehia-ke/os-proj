@@ -42,6 +42,8 @@ process *tempp = NULL;
 
 GtkWidget *loading_window;
 
+Queue* current_process_queue = NULL;
+
 gboolean perform_reset(gpointer data) {
     // Restart the app
     execl("./bin/program", "Fire Scheduler", NULL);
@@ -201,7 +203,7 @@ static void update_memoryAndProcessStore()
 {
     gtk_tree_store_clear(processStore);
 
-    Queue *queue = get_process_queue();
+    Queue *queue = current_process_queue;
     if (!queue || queue_is_empty(queue))
     {
         g_print("Process Queue Empty");
@@ -416,7 +418,7 @@ static void update_runningStore()
 void set_processnumlabel()
 {
     char processnum[50];
-    int processnumber = queue_size(get_process_queue());
+    int processnumber = queue_size(current_process_queue);
     sprintf(processnum, "%d", processnumber);
     char final[50] = "Number of Processes: ";
     strcat(final, processnum);
@@ -682,6 +684,7 @@ void on_manualstep_clicked(GtkWidget *widget, gpointer data)
 
 void update_gui()
 {
+    current_process_queue = get_process_queue();
     update_blockStore();
     clear_memoryBoxes();
     update_memoryAndProcessStore();

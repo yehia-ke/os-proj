@@ -41,8 +41,6 @@ void mlfq_wait(char mutex_name[]) {
         return;
     }
 
-    show_error_message("nigga");
-
     set_state(mlfq_running_process, "Waiting"); // Set the state to Waiting
     pqueue_enqueue(mlfq_waiting_queue[mutex_index], mlfq_running_process); // Enqueue the process in the waiting queue
     mlfq_running_process = NULL; // Clear the running process
@@ -101,11 +99,19 @@ void run_mlfq() {
             printf("Process %d running: %s\n", mlfq_running_process->pid, instruction);
             increment_pc(mlfq_running_process);
             time_slice++;
-            show_error_message(instruction);
             execute_instruction(instruction, mlfq_running_process);  // Execute the instruction
+
+            if(!mlfq_running_process) // Checks if the process has been blocked by a mutex
+            {
+                show_error_message("Process has been blocked by a mutex");
+                time_slice = 0;  // Reset time slice
+                return;
+            }
 
             if(time_slice >= time_quantum[mlfq_running_process->priority - 1]) {
                 // Time slice expired, move to the next queue
+                printf("Quantum expired for process %d\n", mlfq_running_process->pid);
+                mlfq_running_process->tiq--;
                 set_state(mlfq_running_process, "Ready");
                 if(mlfq_running_process->priority <= 3) {
                     // Decrease the priority
@@ -154,11 +160,19 @@ void run_mlfq() {
         printf("Process %d running: %s\n", mlfq_running_process->pid, instruction);
         increment_pc(mlfq_running_process);
         time_slice++;
-        show_error_message(instruction);
         execute_instruction(instruction, mlfq_running_process);  // Execute the instruction
+
+        if (!mlfq_running_process) // Checks if the process has been blocked by a mutex
+        {
+            show_error_message("Process has been blocked by a mutex");
+            time_slice = 0; // Reset time slice
+            return;
+        }
 
         if(time_slice >= time_quantum[mlfq_running_process->priority - 1]) {
             // Time slice expired, move to the next queue
+            printf("Quantum expired for process %d\n", mlfq_running_process->pid);
+            mlfq_running_process->tiq--;
             set_state(mlfq_running_process, "Ready");
             if(mlfq_running_process->priority <= 3) {
                 // Decrease the priority
@@ -193,6 +207,7 @@ Queue* mlfq_get_process_queue()
         Queue* tmp = queue_create();
         while(!queue_is_empty(mlfq_ready_queue[i])){
             PCB* process = queue_dequeue(mlfq_ready_queue[i]);
+            process->tiq++;
             queue_enqueue(tmp, process);
         }
         while(!queue_is_empty(tmp)){
@@ -207,6 +222,7 @@ Queue* mlfq_get_process_queue()
         Queue* tmp = queue_create();
         while(!pqueue_is_empty(mlfq_waiting_queue[i])){
             PCB* process = pqueue_dequeue(mlfq_waiting_queue[i]);
+            process->tiqblock++;
             queue_enqueue(tmp, process);
         }
         while(!queue_is_empty(tmp)){
