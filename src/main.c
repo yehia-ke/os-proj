@@ -146,7 +146,8 @@ static char *get_current_timestamp()
 
 static gboolean console_output_callback(GIOChannel *source, GIOCondition condition, gpointer data)
 {
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(data));
+    GtkTextView *text_view = GTK_TEXT_VIEW(data);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(text_view);
     char buf[256];
     gsize bytes_read;
     GError *error = NULL;
@@ -163,6 +164,9 @@ static gboolean console_output_callback(GIOChannel *source, GIOCondition conditi
     gtk_text_buffer_get_end_iter(buffer, &end);
 
     gtk_text_buffer_insert(buffer, &end, buf, -1);
+
+    // Scroll to the bottom
+    gtk_text_view_scroll_to_iter(text_view, &end, 0.0, FALSE, 0.0, 1.0);
 
     return TRUE;
 }
