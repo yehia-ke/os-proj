@@ -392,7 +392,7 @@
                 <child>
                   <object class="GtkTreeViewColumn" id="mem">
                     <property name="sizing">autosize</property>
-                    <property name="fixed-width">160</property>
+                    <property name="fixed-width">138</property>
                     <property name="title" translatable="yes">Memory Boundaries</property>
                     <child>
                       <object class="GtkCellRendererText" id="pmem"/>
@@ -482,7 +482,7 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="readyinst1">
                         <property name="sizing">autosize</property>
-                        <property name="fixed-width">180</property>
+                        <property name="fixed-width">170</property>
                         <property name="title" translatable="yes">Current Instruction</property>
                         <property name="alignment">0.41999998688697815</property>
                         <child>
@@ -552,7 +552,7 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="blockinst1">
                         <property name="sizing">autosize</property>
-                        <property name="fixed-width">180</property>
+                        <property name="fixed-width">170</property>
                         <property name="title" translatable="yes">Current Instruction</property>
                         <property name="alignment">0.41999998688697815</property>
                         <child>
@@ -623,7 +623,7 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="runinst1">
                         <property name="sizing">autosize</property>
-                        <property name="fixed-width">180</property>
+                        <property name="fixed-width">170</property>
                         <property name="title" translatable="yes">Current Instruction</property>
                         <property name="alignment">0.41999998688697815</property>
                         <child>
@@ -764,7 +764,7 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="resourcepid">
-                            <property name="fixed-width">270</property>
+                            <property name="fixed-width">260</property>
                             <property name="title" translatable="yes">Process ID</property>
                             <child>
                               <object class="GtkCellRendererText" id="resourcepid2"/>

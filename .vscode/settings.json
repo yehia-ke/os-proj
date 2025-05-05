@@ -14,7 +14,8 @@
     "queue.h": "c",
     "glib.h": "c",
     "gtk.h": "c",
-    "scheduler.h": "c"
+    "scheduler.h": "c",
+    "memory.h": "c"
   },
   "C_Cpp.dimInactiveRegions": false,
   "C_Cpp.errorSquiggles": "enabled",
