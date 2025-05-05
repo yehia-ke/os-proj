@@ -39,6 +39,12 @@ void run_rr() {
 
         execute_instruction(instruction, rr_running_process);  // Execute the instruction
 
+        if(!rr_running_process)
+        {
+            rr_time_slice = 0; // Reset time slice
+            return;
+        }
+
         if(rr_running_process->pc == rr_running_process->mem_upper - rr_running_process->mem_lower - 8)
         {
             // Process has finished executing
@@ -78,6 +84,12 @@ void run_rr() {
         rr_time_slice++;
 
         execute_instruction(instruction, rr_running_process);  // Execute the instruction
+
+        if(rr_running_process == NULL)
+        {
+            rr_time_slice = 0; // Reset time slice
+            return;
+        }
 
         if(rr_running_process->pc == rr_running_process->mem_upper - rr_running_process->mem_lower - 8)
         {
