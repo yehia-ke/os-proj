@@ -108,11 +108,9 @@ void run_mlfq()
     {
         // Get the next instruction from the running process
         char *instruction = get_instruction(mlfq_running_process);
-
-        // If no more instructions: mark it done and free it
         if (instruction == NULL)
         {
-            printf("Process %d Finished\n", mlfq_running_process->pid);
+            printf("No instruction to run... Terminating\n");
             set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
             free_process(mlfq_running_process);
             mlfq_running_process = NULL;
@@ -127,6 +125,17 @@ void run_mlfq()
 
         if (!mlfq_running_process) // Checks if the process has been blocked by a mutex
         {
+            time_slice = 0; // Reset time slice
+            return;
+        }
+
+        if(mlfq_running_process->pc == mlfq_running_process->mem_upper - mlfq_running_process->mem_lower - 8)
+        {
+            // Process has finished executing
+            printf("Process %d Finished\n", mlfq_running_process->pid);
+            set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
+            free_process(mlfq_running_process);
+            mlfq_running_process = NULL;
             time_slice = 0; // Reset time slice
             return;
         }
@@ -196,6 +205,17 @@ void run_mlfq()
 
         if (!mlfq_running_process) // Checks if the process has been blocked by a mutex
         {
+            time_slice = 0; // Reset time slice
+            return;
+        }
+
+        if(mlfq_running_process->pc == mlfq_running_process->mem_upper - mlfq_running_process->mem_lower - 8)
+        {
+            // Process has finished executing
+            printf("Process %d Finished\n", mlfq_running_process->pid);
+            set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
+            free_process(mlfq_running_process);
+            mlfq_running_process = NULL;
             time_slice = 0; // Reset time slice
             return;
         }
