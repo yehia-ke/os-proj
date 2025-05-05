@@ -14,7 +14,7 @@ void set_scheduler(char *scheduler_name)
         current_scheduler = scheduler_name; // Set the current scheduler
         printf("Scheduler set to: %s\n", current_scheduler);
     } else if (strcmp(scheduler_name, "rr") == 0) {
-        initialize_rr(2);  // Initialize rr scheduler
+        initialize_rr();  // Initialize rr scheduler
         current_scheduler = scheduler_name;  // Set the current scheduler
         printf("Scheduler set to: %s\n", current_scheduler);
     }

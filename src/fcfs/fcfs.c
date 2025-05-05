@@ -91,6 +91,16 @@ void run_fcfs() {
             printf("Process %d running: %s\n", fcfs_running_process->pid, instruction);
             increment_pc(fcfs_running_process);
             execute_instruction(instruction, fcfs_running_process);
+
+            if (fcfs_running_process->pc == fcfs_running_process->mem_upper - fcfs_running_process->mem_lower - 8)
+            {
+                // Process has finished executing
+                printf("Process %d Finished\n", fcfs_running_process->pid);
+                set_state(fcfs_running_process, "Terminated"); // Set state to Terminated
+                free_process(fcfs_running_process);
+                fcfs_running_process = NULL;
+                return;
+            }
         }
     }
 
@@ -104,6 +114,15 @@ void run_fcfs() {
             printf("Process %d running: %s\n", fcfs_running_process->pid, instruction);
             increment_pc(fcfs_running_process);
             execute_instruction(instruction, fcfs_running_process);
+            if (fcfs_running_process->pc == fcfs_running_process->mem_upper - fcfs_running_process->mem_lower - 8)
+            {
+                // Process has finished executing
+                printf("Process %d Finished\n", fcfs_running_process->pid);
+                set_state(fcfs_running_process, "Terminated"); // Set state to Terminated
+                free_process(fcfs_running_process);
+                fcfs_running_process = NULL;
+                return;
+            }
         } else {
             printf("Process %d Finished\n", fcfs_running_process->pid);
             set_state(fcfs_running_process, "Terminated");

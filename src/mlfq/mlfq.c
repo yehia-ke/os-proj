@@ -51,6 +51,10 @@ void mlfq_wait(char mutex_name[])
     }
 
     set_state(mlfq_running_process, "Waiting");                            // Set the state to Waiting
+    if(time_slice >= time_quantum[mlfq_running_process->priority - 1])
+    {
+        set_priority(mlfq_running_process, mlfq_running_process->priority + 1); // Decrease the priority
+    }
     pqueue_enqueue(mlfq_waiting_queue[mutex_index], mlfq_running_process); // Enqueue the process in the waiting queue
     mlfq_running_process = NULL;                                           // Clear the running process
     time_slice = 0;                                                        // Reset the time slice
@@ -104,11 +108,9 @@ void run_mlfq()
     {
         // Get the next instruction from the running process
         char *instruction = get_instruction(mlfq_running_process);
-
-        // If no more instructions: mark it done and free it
         if (instruction == NULL)
         {
-            printf("Process %d Finished\n", mlfq_running_process->pid);
+            printf("No instruction to run... Terminating\n");
             set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
             free_process(mlfq_running_process);
             mlfq_running_process = NULL;
@@ -123,7 +125,17 @@ void run_mlfq()
 
         if (!mlfq_running_process) // Checks if the process has been blocked by a mutex
         {
-            show_error_message("Process has been blocked by a mutex");
+            time_slice = 0; // Reset time slice
+            return;
+        }
+
+        if(mlfq_running_process->pc == mlfq_running_process->mem_upper - mlfq_running_process->mem_lower - 8)
+        {
+            // Process has finished executing
+            printf("Process %d Finished\n", mlfq_running_process->pid);
+            set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
+            free_process(mlfq_running_process);
+            mlfq_running_process = NULL;
             time_slice = 0; // Reset time slice
             return;
         }
@@ -193,7 +205,17 @@ void run_mlfq()
 
         if (!mlfq_running_process) // Checks if the process has been blocked by a mutex
         {
-            show_error_message("Process has been blocked by a mutex");
+            time_slice = 0; // Reset time slice
+            return;
+        }
+
+        if(mlfq_running_process->pc == mlfq_running_process->mem_upper - mlfq_running_process->mem_lower - 8)
+        {
+            // Process has finished executing
+            printf("Process %d Finished\n", mlfq_running_process->pid);
+            set_state(mlfq_running_process, "Terminated"); // Set state to Terminated
+            free_process(mlfq_running_process);
+            mlfq_running_process = NULL;
             time_slice = 0; // Reset time slice
             return;
         }

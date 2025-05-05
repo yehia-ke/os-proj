@@ -39,6 +39,17 @@ void run_rr() {
 
         execute_instruction(instruction, rr_running_process);  // Execute the instruction
 
+        if(rr_running_process->pc == rr_running_process->mem_upper - rr_running_process->mem_lower - 8)
+        {
+            // Process has finished executing
+            printf("Process %d Finished\n", rr_running_process->pid);
+            set_state(rr_running_process, "Terminated"); // Set state to Terminated
+            free_process(rr_running_process);
+            rr_running_process = NULL;
+            rr_time_slice = 0; // Reset time slice
+            return;
+        }
+
         if (rr_time_slice >= rr_time_quantum) {
             // Time quantum exhausted, requeue the process
             printf("Quantum expired for process %d\n", rr_running_process->pid);
@@ -67,6 +78,17 @@ void run_rr() {
         rr_time_slice++;
 
         execute_instruction(instruction, rr_running_process);  // Execute the instruction
+
+        if(rr_running_process->pc == rr_running_process->mem_upper - rr_running_process->mem_lower - 8)
+        {
+            // Process has finished executing
+            printf("Process %d Finished\n", rr_running_process->pid);
+            set_state(rr_running_process, "Terminated"); // Set state to Terminated
+            free_process(rr_running_process);
+            rr_running_process = NULL;
+            rr_time_slice = 0; // Reset time slice
+            return;
+        }
 
         if(rr_time_slice >= rr_time_quantum) {
             // Time slice expired, move to the next queue
