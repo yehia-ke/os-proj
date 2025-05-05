@@ -82,7 +82,7 @@ void execute_instruction(char *instruction, PCB *process)
         if (strcmp(arg1, "a") == 0 && strcmp(arg2, "input") == 0)
         {
             // Assign user input to var1
-            printf("Please enter a value for a: ");
+            printf("Please enter a value for a: \n");
             char *value = show_text_entry_popup("Enter a value for a");
             // int c;
             // while ((c = getchar()) != '\n' && c != EOF)
@@ -95,7 +95,7 @@ void execute_instruction(char *instruction, PCB *process)
         else if (strcmp(arg1, "b") == 0 && strcmp(arg2, "input") == 0)
         {
             // Assign user input to var2
-            printf("Please enter a value for b: ");
+            printf("Please enter a value for b: \n");
             char *value = show_text_entry_popup("Enter a value for b");
             // int c;
             // fgets(value, sizeof(value), stdin);

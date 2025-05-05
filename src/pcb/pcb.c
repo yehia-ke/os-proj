@@ -75,7 +75,6 @@ PCB* create_process(int pid, char* program_file) {
     pcb->mem_upper = mem_upper;
     pcb->tiq = tiq;
     pcb->tiqblock = tiq;
-    printf("7");
     printf("Process %d created at memory [%d, %d]\n", pid, mem_lower, mem_upper);
     return pcb;
 }

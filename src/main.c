@@ -162,8 +162,6 @@ static gboolean console_output_callback(GIOChannel *source, GIOCondition conditi
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
 
-    // Prepend timestamp to the log message
-    gtk_text_buffer_insert(buffer, &end, get_current_timestamp(), -1);
     gtk_text_buffer_insert(buffer, &end, buf, -1);
 
     return TRUE;
@@ -196,7 +194,6 @@ static void update_blockStore()
     Queue *queue = get_block_queue();
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -239,7 +236,6 @@ static void update_memoryAndProcessStore()
     Queue *queue = current_process_queue;
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -389,7 +385,6 @@ static void update_readyStore()
     Queue *queue = get_ready_queue();
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -432,7 +427,6 @@ static void update_resourceblockStore()
     Queue *queue = get_block_queue();
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -475,7 +469,6 @@ static void update_runningStore()
     Queue *queue = get_run_queue();
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -589,12 +582,11 @@ void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data)
     }
     else
     {
-        process *zeft = malloc(sizeof(process));
-        zeft->arrival_time = tempp->arrival_time;
-        zeft->path = tempp->path;
-        g_print(zeft->path);
-        g_print("%d", zeft->arrival_time);
-        queue_enqueue(TBD, zeft);
+        process *processpp = malloc(sizeof(process));
+        processpp->arrival_time = tempp->arrival_time;
+        processpp->path = tempp->path;
+        g_print("Process File Path:%s, Arrival Time:%d\n", processpp->path, processpp->arrival_time);
+        queue_enqueue(TBD, processpp);
         show_error_message("Process added successfully.");
     }
 }
@@ -706,16 +698,6 @@ void on_mlfq_activate(GtkWidget *widget, gpointer data)
     }
 }
 
-void on_start_clicked(GtkWidget *widget, gpointer data)
-{
-    g_print("Start Simulation clicked.\n");
-    update_memoryAndProcessStore();
-}
-
-void on_stop_clicked(GtkWidget *widget, gpointer data)
-{
-    g_print("Stop Simulation clicked.\n");
-}
 
 void on_reset_clicked(GtkWidget *widget, gpointer data)
 {
