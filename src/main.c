@@ -120,20 +120,21 @@ void checkArrivalTime()
     queue_destroy(tmp);
 }
 
-void *non_blocking_loop(void *arg)
+gboolean automatic_clock_callback(gpointer data)
 {
-    while (automaticClock->is_running)
-    {
-        checkArrivalTime(); // Infinite loop
-        run_scheduler();
-        AutomaticClock_update(automaticClock);
-        g_idle_add((GSourceFunc)update_gui, NULL);
-        // sleep(1); // Sleep for 1 second to avoid excessive CPU usage
-        g_print("Automatic Clock updated.\n");
-        usleep(1500 * 1000);
-    }
-    return NULL;
+    if (!automaticClock->is_running)
+        return G_SOURCE_REMOVE; // Stop the timeout if clock is not running
+
+    checkArrivalTime();        // Handle arrivals
+    run_scheduler();           // Schedule processes
+    AutomaticClock_update(automaticClock); // Advance the clock
+    g_idle_add((GSourceFunc)update_gui, NULL); // Queue GUI update
+
+    g_print("Automatic Clock updated.\n");
+
+    return G_SOURCE_CONTINUE; // Continue calling every timeout interval
 }
+
 
 static char *get_current_timestamp()
 {
@@ -725,18 +726,20 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
                 clocktype = "a";
                 AutomaticClock_start(automaticClock);
                 g_print("Automatic Clock started.\n");
-                pthread_t thread;
-                pthread_create(&thread, NULL, non_blocking_loop, NULL);
+
+                // Start the GTK timeout callback instead of creating a thread
+                g_timeout_add((guint)(automaticClock->interval * 1000), automatic_clock_callback, NULL);
             }
-            else if (clocktype == "m")
+            else if (strcmp(clocktype, "m") == 0)
             {
                 clocktype = "a";
                 int cc = ManualClock_getCycle(manualClock);
                 automaticClock->current_cycle = cc;
                 AutomaticClock_start(automaticClock);
                 g_print("Automatic Clock started.\n");
-                pthread_t thread;
-                pthread_create(&thread, NULL, non_blocking_loop, NULL);
+
+                // Start the GTK timeout callback instead of creating a thread
+                g_timeout_add((guint)(automaticClock->interval * 1000), automatic_clock_callback, NULL);
             }
             else
             {
@@ -745,6 +748,7 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
         }
     }
 }
+
 
 void on_manualstep_clicked(GtkWidget *widget, gpointer data)
 {

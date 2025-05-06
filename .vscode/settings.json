@@ -15,9 +15,10 @@
     "glib.h": "c",
     "gtk.h": "c",
     "scheduler.h": "c",
-    "memory.h": "c"
+    "memory.h": "c",
+    "pthread.h": "c"
   },
   "C_Cpp.dimInactiveRegions": false,
-  "C_Cpp.errorSquiggles": "enabled",
+  "C_Cpp.errorSquiggles": "disabled",
   "C_Cpp.default.compilerPath": "/usr/lib64/ccache/gcc"
 }
