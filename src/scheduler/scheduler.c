@@ -32,7 +32,6 @@ void set_scheduler(char *scheduler_name)
 }
 
 char* run_scheduler() {
-    printtogui("Ball\n");
     if (current_scheduler == NULL) {
         printf("No scheduler set.\n");
         return NULL;
@@ -56,7 +55,6 @@ void add_process_to_scheduler(PCB *process) {
 
     // Call the appropriate scheduler's add process function
     if (strcmp(current_scheduler, "fcfs") == 0) {
-        printf("fcfs");
         fcfs_add_process(process);
     } else if (strcmp(current_scheduler, "rr") == 0) {
         rr_add_process(process);
@@ -106,19 +104,15 @@ Queue* get_process_queue() {
         return NULL;
     }
     if (strcmp(current_scheduler, "fcfs") == 0) {
-        printf("fcfs");
         return fcfs_get_process_queue();
         
     } else if (strcmp(current_scheduler, "rr") == 0) {
-        printf("rr");
         return rr_get_process_queue();
     }
     else if (strcmp(current_scheduler, "mlfq") == 0) {
-        printf("mlfq");
         return mlfq_get_process_queue();
     }
     else{
-        printf("yes");
     }
 }
 
@@ -128,19 +122,15 @@ Queue* get_ready_queue(){
         return NULL;
     }
     if (strcmp(current_scheduler, "fcfs") == 0) {
-        printf("fcfs");
         return fcfs_get_ready_queue();
         
     } else if (strcmp(current_scheduler, "rr") == 0) {
-        printf("rr");
         return rr_get_ready_queue();
     }
     else if (strcmp(current_scheduler, "mlfq") == 0) {
-        printf("mlfq");
         return mlfq_get_ready_queue();
     }
     else{
-        printf("yes");
     }
 }
 
@@ -150,19 +140,15 @@ Queue* get_block_queue(){
         return NULL;
     }
     if (strcmp(current_scheduler, "fcfs") == 0) {
-        printf("fcfs");
         return fcfs_get_block_queue();
         
     } else if (strcmp(current_scheduler, "rr") == 0) {
-        printf("rr");
         return rr_get_block_queue();
     }
     else if (strcmp(current_scheduler, "mlfq") == 0) {
-        printf("mlfq");
         return mlfq_get_block_queue();
     }
     else{
-        printf("yes");
     }
 }
 
@@ -172,18 +158,14 @@ Queue* get_run_queue(){
         return NULL;
     }
     if (strcmp(current_scheduler, "fcfs") == 0) {
-        printf("fcfs");
         return fcfs_get_run_queue();
         
     } else if (strcmp(current_scheduler, "rr") == 0) {
-        printf("rr");
         return rr_get_run_queue();
     }
     else if (strcmp(current_scheduler, "mlfq") == 0) {
-        printf("mlfq");
         return mlfq_get_run_queue();
     }
     else{
-        printf("yes");
     }
 }

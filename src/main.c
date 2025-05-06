@@ -120,20 +120,21 @@ void checkArrivalTime()
     queue_destroy(tmp);
 }
 
-void *non_blocking_loop(void *arg)
+gboolean automatic_clock_callback(gpointer data)
 {
-    while (automaticClock->is_running)
-    {
-        checkArrivalTime(); // Infinite loop
-        run_scheduler();
-        AutomaticClock_update(automaticClock);
-        g_idle_add((GSourceFunc)update_gui, NULL);
-        // sleep(1); // Sleep for 1 second to avoid excessive CPU usage
-        g_print("Automatic Clock updated.\n");
-        usleep(1500 * 1000);
-    }
-    return NULL;
+    if (!automaticClock->is_running)
+        return G_SOURCE_REMOVE; // Stop the timeout if clock is not running
+
+    checkArrivalTime();        // Handle arrivals
+    run_scheduler();           // Schedule processes
+    AutomaticClock_update(automaticClock); // Advance the clock
+    g_idle_add((GSourceFunc)update_gui, NULL); // Queue GUI update
+
+    g_print("Automatic Clock updated.\n");
+
+    return G_SOURCE_CONTINUE; // Continue calling every timeout interval
 }
+
 
 static char *get_current_timestamp()
 {
@@ -146,7 +147,8 @@ static char *get_current_timestamp()
 
 static gboolean console_output_callback(GIOChannel *source, GIOCondition condition, gpointer data)
 {
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(data));
+    GtkTextView *text_view = GTK_TEXT_VIEW(data);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(text_view);
     char buf[256];
     gsize bytes_read;
     GError *error = NULL;
@@ -162,9 +164,10 @@ static gboolean console_output_callback(GIOChannel *source, GIOCondition conditi
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
 
-    // Prepend timestamp to the log message
-    gtk_text_buffer_insert(buffer, &end, get_current_timestamp(), -1);
     gtk_text_buffer_insert(buffer, &end, buf, -1);
+
+    // Scroll to the bottom
+    gtk_text_view_scroll_to_iter(text_view, &end, 0.0, FALSE, 0.0, 1.0);
 
     return TRUE;
 }
@@ -196,7 +199,6 @@ static void update_blockStore()
     Queue *queue = get_block_queue();
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -239,7 +241,6 @@ static void update_memoryAndProcessStore()
     Queue *queue = current_process_queue;
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -389,7 +390,6 @@ static void update_readyStore()
     Queue *queue = get_ready_queue();
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -432,7 +432,6 @@ static void update_resourceblockStore()
     Queue *queue = get_block_queue();
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -475,7 +474,6 @@ static void update_runningStore()
     Queue *queue = get_run_queue();
     if (!queue || queue_is_empty(queue))
     {
-        g_print("Process Queue Empty");
         return;
     }
 
@@ -589,12 +587,11 @@ void on_addprocessbutton_clicked(GtkWidget *widget, gpointer data)
     }
     else
     {
-        process *zeft = malloc(sizeof(process));
-        zeft->arrival_time = tempp->arrival_time;
-        zeft->path = tempp->path;
-        g_print(zeft->path);
-        g_print("%d", zeft->arrival_time);
-        queue_enqueue(TBD, zeft);
+        process *processpp = malloc(sizeof(process));
+        processpp->arrival_time = tempp->arrival_time;
+        processpp->path = tempp->path;
+        g_print("Process File Path:%s, Arrival Time:%d\n", processpp->path, processpp->arrival_time);
+        queue_enqueue(TBD, processpp);
         show_error_message("Process added successfully.");
     }
 }
@@ -706,16 +703,6 @@ void on_mlfq_activate(GtkWidget *widget, gpointer data)
     }
 }
 
-void on_start_clicked(GtkWidget *widget, gpointer data)
-{
-    g_print("Start Simulation clicked.\n");
-    update_memoryAndProcessStore();
-}
-
-void on_stop_clicked(GtkWidget *widget, gpointer data)
-{
-    g_print("Stop Simulation clicked.\n");
-}
 
 void on_reset_clicked(GtkWidget *widget, gpointer data)
 {
@@ -739,18 +726,20 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
                 clocktype = "a";
                 AutomaticClock_start(automaticClock);
                 g_print("Automatic Clock started.\n");
-                pthread_t thread;
-                pthread_create(&thread, NULL, non_blocking_loop, NULL);
+
+                // Start the GTK timeout callback instead of creating a thread
+                g_timeout_add((guint)(automaticClock->interval * 2000), automatic_clock_callback, NULL);
             }
-            else if (clocktype == "m")
+            else if (strcmp(clocktype, "m") == 0)
             {
                 clocktype = "a";
                 int cc = ManualClock_getCycle(manualClock);
                 automaticClock->current_cycle = cc;
                 AutomaticClock_start(automaticClock);
                 g_print("Automatic Clock started.\n");
-                pthread_t thread;
-                pthread_create(&thread, NULL, non_blocking_loop, NULL);
+
+                // Start the GTK timeout callback instead of creating a thread
+                g_timeout_add((guint)(automaticClock->interval * 2000), automatic_clock_callback, NULL);
             }
             else
             {
@@ -759,6 +748,7 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
         }
     }
 }
+
 
 void on_manualstep_clicked(GtkWidget *widget, gpointer data)
 {
