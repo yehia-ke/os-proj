@@ -728,7 +728,7 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
                 g_print("Automatic Clock started.\n");
 
                 // Start the GTK timeout callback instead of creating a thread
-                g_timeout_add((guint)(automaticClock->interval * 1000), automatic_clock_callback, NULL);
+                g_timeout_add((guint)(automaticClock->interval * 2000), automatic_clock_callback, NULL);
             }
             else if (strcmp(clocktype, "m") == 0)
             {
@@ -739,7 +739,7 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
                 g_print("Automatic Clock started.\n");
 
                 // Start the GTK timeout callback instead of creating a thread
-                g_timeout_add((guint)(automaticClock->interval * 1000), automatic_clock_callback, NULL);
+                g_timeout_add((guint)(automaticClock->interval * 2000), automatic_clock_callback, NULL);
             }
             else
             {
