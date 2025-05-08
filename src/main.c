@@ -123,16 +123,16 @@ void checkArrivalTime()
 gboolean automatic_clock_callback(gpointer data)
 {
     if (!automaticClock->is_running)
-        return G_SOURCE_REMOVE; // Stop the timeout if clock is not running
+        return G_SOURCE_REMOVE;
 
-    checkArrivalTime();        // Handle arrivals
-    run_scheduler();           // Schedule processes
-    AutomaticClock_update(automaticClock); // Advance the clock
-    g_idle_add((GSourceFunc)update_gui, NULL); // Queue GUI update
+    checkArrivalTime();        
+    run_scheduler();           
+    AutomaticClock_update(automaticClock); 
+    g_idle_add((GSourceFunc)update_gui, NULL); 
 
     g_print("Automatic Clock updated.\n");
 
-    return G_SOURCE_CONTINUE; // Continue calling every timeout interval
+    return G_SOURCE_CONTINUE; 
 }
 
 
@@ -166,7 +166,6 @@ static gboolean console_output_callback(GIOChannel *source, GIOCondition conditi
 
     gtk_text_buffer_insert(buffer, &end, buf, -1);
 
-    // Scroll to the bottom
     gtk_text_view_scroll_to_iter(text_view, &end, 0.0, FALSE, 0.0, 1.0);
 
     return TRUE;
@@ -267,14 +266,12 @@ static void update_memoryAndProcessStore()
             strcat(mem_lower, mem_upper);
             gtk_tree_store_set(processStore, &iter, 0, pid, 1, process->state, 2, priority, 3, mem_lower, 4, pc, -1);
 
-            // Update the memory grid
             for (int i = process->mem_lower; i <= process->mem_upper; i++)
             {
                 char *memory_word = get_memory_word(i);
                 GtkBox *box = memoryBoxes[i];
                 char *varName;
 
-                // Determine varName based on memory_word
                 if (i >= process->mem_lower && i <= process->mem_lower + 5) {
                     char *start = strchr(memory_word, '_') + 1;
                     char *end = strchr(start, ':');
@@ -299,11 +296,9 @@ static void update_memoryAndProcessStore()
                     }
                 }
 
-                // Allocate memory for the label text
                 char *temp = malloc(50 * sizeof(char));
                 sprintf(temp, "%d: Process %d %s", i, process->pid, varName);
 
-                // Ensure the box contains a valid child widget
                 if (GTK_IS_BOX(box)) {
                     GList *children = gtk_container_get_children(GTK_CONTAINER(box));
                     if (children != NULL) {
@@ -317,7 +312,6 @@ static void update_memoryAndProcessStore()
                     g_print("Box is not a valid GTK Box\n");
                 }
 
-                // Update the style context
                 if (GTK_IS_WIDGET(box)) {
                     GtkStyleContext *box_context = gtk_widget_get_style_context(GTK_WIDGET(box));
                     if (box_context != NULL) {
@@ -336,7 +330,7 @@ static void update_memoryAndProcessStore()
                     g_print("Box is not a valid GTK Widget.\n");
                 }
 
-                free(temp); // Free allocated memory
+                free(temp);
             }
             
             queue_enqueue(temp_queue, process);
@@ -363,7 +357,6 @@ static void clear_memoryBoxes()
     {
         GList *children = gtk_container_get_children(GTK_CONTAINER(memoryBoxes[j]));
         GtkWidget *label = GTK_WIDGET(children->data);
-        //show_error_message(gtk_label_get_text(GTK_LABEL(label)));
         if (GTK_IS_LABEL(label)) {
             char *temp = malloc(50 * sizeof(char));
             sprintf(temp, "%d: Free", j);
@@ -509,7 +502,6 @@ static void update_runningStore()
     queue_destroy(temp_queue);
 }
 
-// Functions to set labels
 void set_processnumlabel()
 {
     char processnum[50];
@@ -603,7 +595,6 @@ void on_arrivaltimeinput_activate(GtkWidget *widget, gpointer data)
     const char *input_text = gtk_entry_get_text(GTK_ENTRY(widget));
     int temptime = atoi(input_text);
 
-    // Initialize tempp if it is NULL
     if (tempp == NULL)
     {
         tempp = malloc(sizeof(process));
@@ -626,7 +617,6 @@ void on_programfilepath_file_set(GtkWidget *widget, gpointer data)
 
     char *selected_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
 
-    // Initialize tempp if it is NULL
     if (tempp == NULL)
     {
         tempp = malloc(sizeof(process));
@@ -636,15 +626,14 @@ void on_programfilepath_file_set(GtkWidget *widget, gpointer data)
             return;
         }
         tempp->path = NULL;
-        tempp->arrival_time = 0; // Initialize fields to avoid garbage values
+        tempp->arrival_time = 0;
     }
 
-    // Allocate memory for the path and copy the selected file path
     tempp->path = malloc(strlen(selected_path) + 1);
     if (tempp->path == NULL)
     {
         show_error_message("Memory allocation failed for the process path.");
-        free(tempp); // Free tempp to avoid memory leaks
+        free(tempp);
         tempp = NULL;
         return;
     }
@@ -727,7 +716,6 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
                 AutomaticClock_start(automaticClock);
                 g_print("Automatic Clock started.\n");
 
-                // Start the GTK timeout callback instead of creating a thread
                 g_timeout_add((guint)(automaticClock->interval * 2000), automatic_clock_callback, NULL);
             }
             else if (strcmp(clocktype, "m") == 0)
@@ -738,7 +726,6 @@ void on_autoswitcher_clicked(GtkWidget *widget, gpointer data)
                 AutomaticClock_start(automaticClock);
                 g_print("Automatic Clock started.\n");
 
-                // Start the GTK timeout callback instead of creating a thread
                 g_timeout_add((guint)(automaticClock->interval * 2000), automatic_clock_callback, NULL);
             }
             else
@@ -816,7 +803,7 @@ int main(int argc, char *argv[])
     GtkBuilder *builder;
     GtkWidget *log_text_view;
     manualClock = ManualClock_create();
-    automaticClock = AutomaticClock_create(0.5); // Default interval of 0.5 seconds
+    automaticClock = AutomaticClock_create(0.5);
     manualClock->is_paused = FALSE;
 
     gtk_init(&argc, &argv);
@@ -830,20 +817,15 @@ int main(int argc, char *argv[])
         GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     builder = gtk_builder_new_from_file("src/glade/pt1.glade");
-
     main_window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
     log_text_view = GTK_WIDGET(gtk_builder_get_object(builder, "log_text_view"));
-
-    // Initialize global labels
     processnumlabel = GTK_WIDGET(gtk_builder_get_object(builder, "processnumlabel"));
     clocklabel = GTK_WIDGET(gtk_builder_get_object(builder, "clocklabel"));
     schedulerlabel = GTK_WIDGET(gtk_builder_get_object(builder, "schedulerlabel"));
     userInputMutex = GTK_WIDGET(gtk_builder_get_object(builder, "userInputMutex"));
     userOutputMutex = GTK_WIDGET(gtk_builder_get_object(builder, "userOutputMutex"));
     fileMutex = GTK_WIDGET(gtk_builder_get_object(builder, "fileMutex"));
-
     redirect_console_to_text_view(log_text_view);
-
     blockStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "blockStore"));
     processStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "processStore"));
     readyStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "readyStore"));

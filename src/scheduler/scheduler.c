@@ -10,18 +10,18 @@ void set_scheduler(char *scheduler_name)
 {
     if (strcmp(scheduler_name, "fcfs") == 0)
     {
-        initialize_fcfs();                  // Initialize fcfs scheduler
-        current_scheduler = scheduler_name; // Set the current scheduler
+        initialize_fcfs();                  
+        current_scheduler = scheduler_name; 
         printf("Scheduler set to: %s\n", current_scheduler);
     } else if (strcmp(scheduler_name, "rr") == 0) {
-        initialize_rr();  // Initialize rr scheduler
-        current_scheduler = scheduler_name;  // Set the current scheduler
+        initialize_rr();  
+        current_scheduler = scheduler_name; 
         printf("Scheduler set to: %s\n", current_scheduler);
     }
     else if (strcmp(scheduler_name, "mlfq") == 0)
     {
-        initialize_mlfq();                  // Initialize mlfq scheduler
-        current_scheduler = scheduler_name; // Set the current scheduler
+        initialize_mlfq();                 
+        current_scheduler = scheduler_name; 
         printf("Scheduler set to: %s\n", current_scheduler);
     }
     else
@@ -37,7 +37,6 @@ char* run_scheduler() {
         return NULL;
     }
 
-    // Call the appropriate scheduler's run function
     if (strcmp(current_scheduler, "fcfs") == 0) {
         run_fcfs();
     } else if (strcmp(current_scheduler, "rr") == 0) {
@@ -53,7 +52,6 @@ void add_process_to_scheduler(PCB *process) {
         return;
     }
 
-    // Call the appropriate scheduler's add process function
     if (strcmp(current_scheduler, "fcfs") == 0) {
         fcfs_add_process(process);
     } else if (strcmp(current_scheduler, "rr") == 0) {
@@ -87,7 +85,6 @@ void scheduler_signal(char mutex_name[]) {
         return;
     }
 
-    // Call the appropriate scheduler's signal function
     if (strcmp(current_scheduler, "fcfs") == 0) {
         fcfs_signal(mutex_name);
     } else if (strcmp(current_scheduler, "rr") == 0) {

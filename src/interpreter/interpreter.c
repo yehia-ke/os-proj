@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include "../popup/popup.h"
 #include "../error/error.h"
-
-// Global Mutexes defined in mutex.c
 extern Mutex userInput;
 extern Mutex userOutput;
 extern Mutex file;
@@ -44,7 +42,7 @@ void execute_instruction(char *instruction, PCB *process)
                 printf("Process %d waiting for mutex %s.\n Putting process %d in waiting queue",
                        process->pid, arg1, process->pid);
 
-                scheduler_wait(arg1); // Wait for the mutex to be released
+                scheduler_wait(arg1);
             }
         }
     }
@@ -62,8 +60,7 @@ void execute_instruction(char *instruction, PCB *process)
         if (target_mutex)
         {
             char tmp[50];
-            sprintf(tmp, "%d", process->pid); // Format PCB pid as a string
-
+            sprintf(tmp, "%d", process->pid);
             // Check if the current process is the owner
             if (strcmp(target_mutex->owner, tmp) == 0)
             {
@@ -84,11 +81,6 @@ void execute_instruction(char *instruction, PCB *process)
             // Assign user input to var1
             printf("Please enter a value for a: \n");
             char *value = show_text_entry_popup("Enter a value for a");
-            // int c;
-            // while ((c = getchar()) != '\n' && c != EOF)
-            //     ;
-            // fgets(value, sizeof(value), stdin);
-            // value[strcspn(value, "\n")] = '\0';
             printf("%s\n", value);
             set_variable(process, "var1", value);
         }
@@ -97,9 +89,6 @@ void execute_instruction(char *instruction, PCB *process)
             // Assign user input to var2
             printf("Please enter a value for b: \n");
             char *value = show_text_entry_popup("Enter a value for b");
-            // int c;
-            // fgets(value, sizeof(value), stdin);
-            // value[strcspn(value, "\n")] = '\0';
             printf("%s\n", value);
             set_variable(process, "var2", value);
         }
@@ -161,10 +150,9 @@ void execute_instruction(char *instruction, PCB *process)
     {
         char output[256] = "Output: "; // Allocate a writable buffer with sufficient size
 
-        strncat(output, value, sizeof(output) - strlen(output) - 1); // Safely concatenate
+        strncat(output, value, sizeof(output) - strlen(output) - 1);
         printf("%s\n", output); // Print the concatenated output
 
-        // Assuming `show_info_message` function exists for informational messages
         show_error_message(output); 
     }
     else
@@ -183,24 +171,24 @@ void execute_instruction(char *instruction, PCB *process)
         {
             for (int i = end; i <= start; i++)
             {
-                sprintf(buffer, "%d", i); // Convert integer to string
-                strcat(output, buffer);   // Append the number to the output
-                strcat(output, " ");      // Append a space
-                printf("%d ", i);         // Print the number
+                sprintf(buffer, "%d", i); 
+                strcat(output, buffer);   
+                strcat(output, " ");      
+                printf("%d ", i);      
             }
         }
         else
         {
             for (int i = start; i <= end; i++)
             {
-                sprintf(buffer, "%d", i); // Convert integer to string
-                strcat(output, buffer);   // Append the number to the output
-                strcat(output, " ");      // Append a space
-                printf("%d ", i);         // Print the number
+                sprintf(buffer, "%d", i); 
+                strcat(output, buffer);  
+                strcat(output, " ");     
+                printf("%d ", i);         
             }
         }
         printf("\n");
-        show_error_message(output); // Assuming this function logs informational messages
+        show_error_message(output);
     }
     else if (strcmp(command, "writeFile") == 0)
     {

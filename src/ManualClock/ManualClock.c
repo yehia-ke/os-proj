@@ -25,9 +25,6 @@ void ManualClock_destroy(ManualClock* clock) {
 void ManualClock_tick(ManualClock* clock) {
     if (!clock) return;
 
-    // printf("Press ENTER to proceed to the next cycle...");
-    // while (getchar() != '\n');
-
     clock->current_cycle++;
 }
 

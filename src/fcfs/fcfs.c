@@ -64,17 +64,16 @@ void fcfs_signal(char mutex_name[]) {
 
     if(fcfs_waiting_queue[mutex_index] == NULL || queue_is_empty(fcfs_waiting_queue[mutex_index])) {
         printf("No processes waiting on mutex %s\n", mutex_name);
-        strcpy(mutex_owner, ""); // Clear the mutex name
+        strcpy(mutex_owner, "");
         return;
     }
 
 
-    PCB* waiting_process = (PCB*)queue_dequeue(fcfs_waiting_queue[mutex_index]); // Dequeue the first waiting process
-    // Enqueue it in its respective priority queue
+    PCB* waiting_process = (PCB*)queue_dequeue(fcfs_waiting_queue[mutex_index]);
     queue_enqueue(fcfs_ready_queue, waiting_process);
     sprintf(tmp, "%d", waiting_process->pid);
-    strcpy(mutex_owner, tmp); // Copy the process ID to the mutex name
-    set_state(waiting_process, "Ready"); // Set its state to Ready
+    strcpy(mutex_owner, tmp);
+    set_state(waiting_process, "Ready");
 }
 
 void run_fcfs() {
@@ -94,9 +93,8 @@ void run_fcfs() {
 
             if (fcfs_running_process->pc == fcfs_running_process->mem_upper - fcfs_running_process->mem_lower - 8)
             {
-                // Process has finished executing
                 printf("Process %d Finished\n", fcfs_running_process->pid);
-                set_state(fcfs_running_process, "Terminated"); // Set state to Terminated
+                set_state(fcfs_running_process, "Terminated");
                 free_process(fcfs_running_process);
                 fcfs_running_process = NULL;
                 return;
@@ -118,7 +116,7 @@ void run_fcfs() {
             {
                 // Process has finished executing
                 printf("Process %d Finished\n", fcfs_running_process->pid);
-                set_state(fcfs_running_process, "Terminated"); // Set state to Terminated
+                set_state(fcfs_running_process, "Terminated");
                 free_process(fcfs_running_process);
                 fcfs_running_process = NULL;
                 return;
@@ -166,7 +164,7 @@ Queue* fcfs_get_process_queue() {
         }
     }
 
-    return process_queue; // Return the process queue
+    return process_queue;
 }
 Queue* fcfs_get_ready_queue() {
     return fcfs_ready_queue;
@@ -186,7 +184,7 @@ Queue* fcfs_get_block_queue() {
             queue_enqueue(block_queue, p1);
         }
     }
-    return block_queue; // Return the process queue
+    return block_queue;
 }
 Queue* fcfs_get_run_queue() {
     Queue* running = queue_create();

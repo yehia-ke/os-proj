@@ -3,28 +3,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Define the mutex variables
-Mutex userInput = { "" };   // Initially no owner
-Mutex userOutput = { "" };  // Initially no owner
-Mutex file = { "" };        // Initially no owner
+Mutex userInput = { "" };  
+Mutex userOutput = { "" }; 
+Mutex file = { "" };
 
 int is_owner(Mutex* mutex, PCB* pcb) {
     char tmp[50];
-    // Check if the mutex has no owner
     if (strlen(mutex->owner) == 0) {
-        // Assign the PCB as the owner
         sprintf(tmp, "%d", pcb->pid);
         strcpy(mutex->owner, tmp);
-        return 1; // Successfully assigned ownership
+        return 1;
     }
 
-    // Check if the given PCB is already the owner
-    sprintf(tmp, "%d", pcb->pid); // Format PCB pid as a string
+    sprintf(tmp, "%d", pcb->pid);
     if (strcmp(mutex->owner, tmp) == 0) {
-        return 1; // PCB is already the owner
+        return 1; 
     }
 
-    // Otherwise, the PCB is not the owner
     return 0;
 }
 
@@ -37,6 +32,6 @@ const char* getMutex(int i) {
         case 2:
             return file.owner;
         default:
-            return "Invalid mutex index"; // Return error message for invalid index
+            return "Invalid mutex index";
     }
 }

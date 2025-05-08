@@ -177,16 +177,16 @@ void run_mlfq()
     }
     else if (!queue_is_empty(mlfq_ready_queue[2]))
     {
-        current_priority = 2; // Set to next priority
+        current_priority = 2; 
     }
     else if (!queue_is_empty(mlfq_ready_queue[3]))
     {
-        current_priority = 3; // Set to next priority
+        current_priority = 3; 
     }
     else
     {
         printf("No processes in any queue\n");
-        return; // No processes in any queue
+        return; 
     }
 
     // If the highest priority queue isn't empty, start the next process
@@ -296,8 +296,7 @@ Queue *mlfq_get_process_queue()
         }
     }
 
-    return process_queue; // Return the process queue
-}
+    return process_queue;
 Queue *mlfq_get_ready_queue()
 {
     Queue *ready_queue = queue_create();
@@ -317,7 +316,7 @@ Queue *mlfq_get_ready_queue()
             queue_enqueue(ready_queue, p1);
         }
     }
-    return ready_queue; // Return the process queue // Return the highest priority queue
+    return ready_queue;
 }
 Queue *mlfq_get_block_queue()
 {
@@ -338,12 +337,12 @@ Queue *mlfq_get_block_queue()
             queue_enqueue(block_queue, p1);
         }
     }
-    return block_queue; // Return the process queue
+    return block_queue;
 }
 Queue *mlfq_get_run_queue()
 {
     Queue *running = queue_create();
     queue_enqueue(running, mlfq_running_process);
 
-    return running; // Return the highest priority queue
+    return running;
 }
