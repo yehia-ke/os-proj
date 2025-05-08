@@ -295,8 +295,11 @@ Queue *mlfq_get_process_queue()
             queue_enqueue(process_queue, p1);
         }
     }
+    
 
     return process_queue;
+
+}
 Queue *mlfq_get_ready_queue()
 {
     Queue *ready_queue = queue_create();
